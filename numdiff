@@ -1,0 +1,24 @@
+#! /usr/bin/env python
+# -*- coding: iso-8859-15 -*-
+
+# Copyright (C) 2003, 2005 by Germanischer Lloyd
+
+# $Header: /data/tmp/hoel/tmp/cvstmp/numdiff/numdiff,v 1.1.1.1 2006-01-16 15:02:35 hoel Exp $
+#
+# ======================================================================
+# Module    numdiff
+# Task      numerical diff for text files
+# ----------------------------------------------------------------------
+# Author    Berthold Höllmann <hoel@GL-Group.com>
+# Project   numdiff
+# ----------------------------------------------------------------------
+# Status    $State: Exp $
+# Date      $Date: 2006-01-16 15:02:35 $
+# ======================================================================
+
+from numdiff import main
+main()
+
+# Local Variables:;
+# compile-command:"make test";
+# End:;
