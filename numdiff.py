@@ -4,7 +4,7 @@
 # Copyright (C) 2005 by Germanischer Lloyd AG
 
 """
-$Header: /data/tmp/hoel/tmp/cvstmp/numdiff/numdiff.py,v 1.1.1.1 2006-01-16 15:02:35 hoel Exp $
+$Header: /data/tmp/hoel/tmp/cvstmp/numdiff/numdiff.py,v 1.2 2006-01-19 15:36:14 hoel Exp $
 
 ======================================================================
 Module    numdiff
@@ -14,15 +14,15 @@ Author    Berthold Höllmann <hoel@GL-Group.com>
 Project   numdiff
 ----------------------------------------------------------------------
 Status    $State: Exp $
-Date      $Date: 2006-01-16 15:02:35 $
+Date      $Date: 2006-01-19 15:36:14 $
 ======================================================================
 """
 
-#  CVSID: $Id: numdiff.py,v 1.1.1.1 2006-01-16 15:02:35 hoel Exp $
+#  CVSID: $Id: numdiff.py,v 1.2 2006-01-19 15:36:14 hoel Exp $
 __author__       = ("2005 Germanischer Lloyd (author: $Author: hoel $) " +
                     "hoel@GL-Group.com")
-__date__         = "$Date: 2006-01-16 15:02:35 $"
-__version__      = "$Revision: 1.1.1.1 $"[10:-1]
+__date__         = "$Date: 2006-01-19 15:36:14 $"
+__version__      = "$Revision: 1.2 $"[10:-1]
 __package_info__ = """ """
 
 import sys
@@ -111,8 +111,9 @@ class DiffContext(object):
     def report(self, line, item1, item2):
         "error report"
         list = self.current.list()
-        self.reportTo.write('--- line %d ---\n' % (line-len(list), ))
-        self.reportTo.write('%s' % ('  '.join(list)))
+        if list or line == 1:
+            self.reportTo.write('--- line %d ---\n' % (line-len(list), ))
+            self.reportTo.write('%s' % ('  '.join(list)))
         self.reportTo.write('< %s' % (item1))
         self.reportTo.write('> %s' % (item2))
         self.current.clear()
@@ -149,13 +150,17 @@ class NumDiff(object):
                 sLine2 = self.splitline(line2[0])
                 if len(sLine1) != len(sLine2):
                     self.context.append(line1, line2[0])
+                    foundError = True
                     continue
                 for token1, token2 in izip(sLine1, sLine2):
                     if token1 == token2:
                         continue
                     elif _float.match(token1) or _float.match(token2):
-                        if self.fequals(float(token1), float(token2)):
-                            continue
+                        try:
+                            if self.fequals(float(token1), float(token2)):
+                                continue
+                        except ValueError:
+                            pass
                     elif _int.match(token1) or _int.match(token2):
                         if self.fequals(int(token1), int(token2)):
                             continue
