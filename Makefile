@@ -8,10 +8,10 @@
 # Project   GLPy
 # ----------------------------------------------------------------------
 # Status    $State: Exp $
-# Date      $Date: 2006-01-16 15:02:35 $
+# Date      $Date: 2006-01-19 15:35:11 $
 # ======================================================================
 
-# CVSID: $Id: Makefile,v 1.1.1.1 2006-01-16 15:02:35 hoel Exp $
+# CVSID: $Id: Makefile,v 1.2 2006-01-19 15:35:11 hoel Exp $
 
 SHELL = /bin/sh
 
@@ -50,7 +50,7 @@ call1_test:	$(PY) ref/first1.txt  ref/first2.txt
 	touch $@
 
 call2_test:	$(PY) ref/second1.txt  ref/second2.txt
-	numdiff ref/second1.txt  ref/second2.txt --eps=2e-5
+	./numdiff ref/second1.txt  ref/second2.txt --eps=2e-5
 	touch $@
 
 call3_test:	$(PY) ref/third1.txt  ref/third2.txt
