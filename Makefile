@@ -8,10 +8,10 @@
 # Project   GLPy
 # ----------------------------------------------------------------------
 # Status    $State: Exp $
-# Date      $Date: 2006-01-19 15:35:11 $
+# Date      $Date: 2006-01-19 15:35:18 $
 # ======================================================================
 
-# CVSID: $Id: Makefile,v 1.2 2006-01-19 15:35:11 hoel Exp $
+# CVSID: $Id: Makefile,v 1.3 2006-01-19 15:35:18 hoel Exp $
 
 SHELL = /bin/sh
 
@@ -65,5 +65,5 @@ clean:
 	rm -f $(TESTS)
 
 # Local Variables:
-# compile-command:"make test#"
+# compile-command:"make test"
 # End:
