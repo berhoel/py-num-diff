@@ -4,7 +4,7 @@
 # Copyright (C) 2005 by Germanischer Lloyd AG
 
 """
-$Header: /data/tmp/hoel/tmp/cvstmp/numdiff/numdiff.py,v 1.2 2006-01-19 15:36:14 hoel Exp $
+$Header: /data/tmp/hoel/tmp/cvstmp/numdiff/numdiff.py,v 1.3 2006-01-30 16:23:36 hoel Exp $
 
 ======================================================================
 Module    numdiff
@@ -14,22 +14,24 @@ Author    Berthold Höllmann <hoel@GL-Group.com>
 Project   numdiff
 ----------------------------------------------------------------------
 Status    $State: Exp $
-Date      $Date: 2006-01-19 15:36:14 $
+Date      $Date: 2006-01-30 16:23:36 $
 ======================================================================
 """
 
-#  CVSID: $Id: numdiff.py,v 1.2 2006-01-19 15:36:14 hoel Exp $
+#  CVSID: $Id: numdiff.py,v 1.3 2006-01-30 16:23:36 hoel Exp $
 __author__       = ("2005 Germanischer Lloyd (author: $Author: hoel $) " +
                     "hoel@GL-Group.com")
-__date__         = "$Date: 2006-01-19 15:36:14 $"
-__version__      = "$Revision: 1.2 $"[10:-1]
+__date__         = "$Date: 2006-01-30 16:23:36 $"
+__version__      = "$Revision: 1.3 $"[10:-1]
 __package_info__ = """ """
 
-import sys
-from optparse import OptionParser
-from itertools import izip
-import re
 import copy
+import re
+import sys
+from itertools import izip
+from optparse import OptionParser
+
+import Numeric as N
 
 _float = re.compile(r"[-+]?(\d+(\.\d*)?|\d*\.\d+)([eE][-+]?\d+)?")
 _int   = re.compile(r"[-+]?\d+(?![.eE])")
@@ -126,7 +128,8 @@ class NumDiff(object):
             self.options = {}
         else:
             self.options = options
-        self.eps = float(self.options.get('eps', 1e-6))
+        self.aeps = self.options.get('aeps', 1e-8)
+        self.reps = self.options.get('reps', 1e-5)
         self.context = DiffContext(self.options.get('context', 5),
                                    cline=cline)
 
@@ -183,7 +186,7 @@ class NumDiff(object):
     def fequals(self, float1, float2):
         """Check for arguments beeing numerical equal.
 """
-        return abs((float1 - float2)/float1) < self.eps
+        return N.allclose(float1, float2, self.reps, self.aeps)
 
 def main():
     """Main program. Used when called on command line.
@@ -201,14 +204,17 @@ Compare two text files with taking into account numerical errors.
                        metavar="<comment char>",
                        help="""Ignore lines starting with the comment
 char when reading either file. Default: Do not ignore any line.""")
-    parser.add_option ("-e", "--eps",
-                       action="store", default="1e-6", metavar="<EPS>",
+    parser.add_option ("-e", "--reps",
+                       type="float", default=1e-5, metavar="<rEPS>",
+                       help="""Relative error to be accepted in
+numerial comparisons. Default: %default""")
+    parser.add_option ("-a", "--aeps",
+                       type="float", default=1e-8, metavar="<aEPS>",
                        help="""Relative error to be accepted in
 numerial comparisons. Default: %default""")
 
     parser.add_option ("-C", "--context",
-                       action="store", default="3", metavar="<LINES>",
-
+                       type="int", default="3", metavar="<LINES>",
                        help="""Number of context lines to be
 reported. Default: %default""")
 
@@ -221,8 +227,9 @@ reported. Default: %default""")
     file2 = file(args[1])
     worker = NumDiff(cline=" ".join(sys.argv),
                      options=dict(cchars=options.comment_char,
-                                  eps=float(options.eps),
-                                  context=int(options.context)))
+                                  aeps=options.aeps,
+                                  reps=options.reps,
+                                  context=options.context))
     worker.compare(file1, file2)
     file1.close()
     file2.close()

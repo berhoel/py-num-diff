@@ -4,7 +4,7 @@
 # Copyright (C) 2005 by Germanischer Lloyd AG
 
 """
-$Header: /data/tmp/hoel/tmp/cvstmp/numdiff/test.py,v 1.1.1.1 2006-01-16 15:02:35 hoel Exp $
+$Header: /data/tmp/hoel/tmp/cvstmp/numdiff/test.py,v 1.2 2006-01-30 16:23:36 hoel Exp $
 
 ======================================================================
 Module    test
@@ -14,15 +14,15 @@ Author    Berthold Höllmann <hoel@GL-Group.com>
 Project   numdiff
 ----------------------------------------------------------------------
 Status    $State: Exp $
-Date      $Date: 2006-01-16 15:02:35 $
+Date      $Date: 2006-01-30 16:23:36 $
 ======================================================================
 """
 
-#  CVSID: $Id: test.py,v 1.1.1.1 2006-01-16 15:02:35 hoel Exp $
+#  CVSID: $Id: test.py,v 1.2 2006-01-30 16:23:36 hoel Exp $
 __author__       = ("2005 Germanischer Lloyd (author: $Author: hoel $) " +
                     "hoel@GL-Group.com")
-__date__         = "$Date: 2006-01-16 15:02:35 $"
-__version__      = "$Revision: 1.1.1.1 $"[10:-1]
+__date__         = "$Date: 2006-01-30 16:23:36 $"
+__version__      = "$Revision: 1.2 $"[10:-1]
 __package_info__ = """ """
 
 import unittest
@@ -122,7 +122,7 @@ got it?
         "Avoid error reporting with increased eps"
         file1 = file('ref/second1.txt')
         file2 = file('ref/second2.txt')
-        tester = numdiff.NumDiff(options=dict(eps=2e-5))
+        tester = numdiff.NumDiff(options=dict(aeps=2e-5))
         self.assert_(tester.compare, (file1, file2))
         file1.close()
         file2.close()
