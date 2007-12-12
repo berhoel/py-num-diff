@@ -4,7 +4,7 @@
 # Copyright (C) 2005 by Germanischer Lloyd AG
 
 """
-$Header: /data/tmp/hoel/tmp/cvstmp/numdiff/test.py,v 1.2 2006-01-30 16:23:36 hoel Exp $
+$Header: /data/tmp/hoel/tmp/cvstmp/numdiff/test.py,v 1.3 2007-12-12 14:34:09 hoel Exp $
 
 ======================================================================
 Module    test
@@ -14,15 +14,15 @@ Author    Berthold Höllmann <hoel@GL-Group.com>
 Project   numdiff
 ----------------------------------------------------------------------
 Status    $State: Exp $
-Date      $Date: 2006-01-30 16:23:36 $
+Date      $Date: 2007-12-12 14:34:09 $
 ======================================================================
 """
 
-#  CVSID: $Id: test.py,v 1.2 2006-01-30 16:23:36 hoel Exp $
+#  CVSID: $Id: test.py,v 1.3 2007-12-12 14:34:09 hoel Exp $
 __author__       = ("2005 Germanischer Lloyd (author: $Author: hoel $) " +
                     "hoel@GL-Group.com")
-__date__         = "$Date: 2006-01-30 16:23:36 $"
-__version__      = "$Revision: 1.2 $"[10:-1]
+__date__         = "$Date: 2007-12-12 14:34:09 $"
+__version__      = "$Revision: 1.3 $"[10:-1]
 __package_info__ = """ """
 
 import unittest
@@ -123,6 +123,15 @@ got it?
         file1 = file('ref/second1.txt')
         file2 = file('ref/second2.txt')
         tester = numdiff.NumDiff(options=dict(aeps=2e-5))
+        self.assert_(tester.compare, (file1, file2))
+        file1.close()
+        file2.close()
+
+    def test6(self):
+        "Accept commas adjacent to values"
+        file1 = file('ref/comma1.txt')
+        file2 = file('ref/comma2.txt')
+        tester = numdiff.NumDiff()
         self.assert_(tester.compare, (file1, file2))
         file1.close()
         file2.close()

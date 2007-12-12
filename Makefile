@@ -8,22 +8,28 @@
 # Project   GLPy
 # ----------------------------------------------------------------------
 # Status    $State: Exp $
-# Date      $Date: 2006-01-30 16:23:36 $
+# Date      $Date: 2007-12-12 14:34:09 $
 # ======================================================================
 
-# CVSID: $Id: Makefile,v 1.4 2006-01-30 16:23:36 hoel Exp $
+# CVSID: $Id: Makefile,v 1.5 2007-12-12 14:34:09 hoel Exp $
 
 SHELL = /bin/sh
 
 PY = numdiff.py
 
 TESTS = test_test run1_test run2_test run3_test run4_test	\
-	call1_test call2_test call3_test call4_test
+	call1_test call2_test call3_test call4_test		\
+	comma_test
 
-all:
-	@echo "nothing to be done"
+all:	build
 
 test: $(TESTS)
+
+build:
+	python setup.py build
+
+install:	test
+	python setup.py install
 
 %_test: %.py $(PY)
 	python $<
@@ -61,8 +67,14 @@ call4_test:	$(PY) ref/third1.txt  ref/third2.txt
 	./numdiff ref/third1.txt  ref/third2.txt --aeps=1e-11 ; [ $$? -eq 1 ]
 	touch $@
 
+comma_test:	$(PY) ref/comma1.txt  ref/comma2.txt
+	./numdiff ref/comma1.txt  ref/comma2.txt
+	touch $@
+
 clean:
 	rm -f $(TESTS)
+
+.PHONY:	build	install
 
 # Local Variables:
 # compile-command:"make test"

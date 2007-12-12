@@ -4,7 +4,7 @@
 # Copyright (C) 2005 by Germanischer Lloyd AG
 
 """
-$Header: /data/tmp/hoel/tmp/cvstmp/numdiff/numdiff.py,v 1.3 2006-01-30 16:23:36 hoel Exp $
+$Header: /data/tmp/hoel/tmp/cvstmp/numdiff/numdiff.py,v 1.4 2007-12-12 14:34:09 hoel Exp $
 
 ======================================================================
 Module    numdiff
@@ -14,15 +14,15 @@ Author    Berthold Höllmann <hoel@GL-Group.com>
 Project   numdiff
 ----------------------------------------------------------------------
 Status    $State: Exp $
-Date      $Date: 2006-01-30 16:23:36 $
+Date      $Date: 2007-12-12 14:34:09 $
 ======================================================================
 """
 
-#  CVSID: $Id: numdiff.py,v 1.3 2006-01-30 16:23:36 hoel Exp $
+#  CVSID: $Id: numdiff.py,v 1.4 2007-12-12 14:34:09 hoel Exp $
 __author__       = ("2005 Germanischer Lloyd (author: $Author: hoel $) " +
                     "hoel@GL-Group.com")
-__date__         = "$Date: 2006-01-30 16:23:36 $"
-__version__      = "$Revision: 1.3 $"[10:-1]
+__date__         = "$Date: 2007-12-12 14:34:09 $"
+__version__      = "$Revision: 1.4 $"[10:-1]
 __package_info__ = """ """
 
 import copy
@@ -123,6 +123,7 @@ class DiffContext(object):
 class NumDiff(object):
     """Numerical diff for text files.
 """
+    linesplit = re.compile(r' *, *| +')
     def __init__(self, cline='', options=None):
         if options is None:
             self.options = {}
@@ -142,10 +143,24 @@ class NumDiff(object):
     def compare(self, fileA, fileB):
         """call the necessary methods
 """
-        content1 = CFile(fileA, self.iscomment)
-        content2 = CFile(fileB, self.iscomment)
+        content1 = iter(CFile(fileA, self.iscomment))
+        content2 = iter(CFile(fileB, self.iscomment))
         foundError = False
-        for line1, line2 in izip(content1, content2):
+        stopped1 = False
+        while 1:
+            try:
+                line1 = content1.next()
+            except StopIteration:
+                stopped1 = True
+            try:
+                line2 = content2.next()
+            except StopIteration:
+                if stopped1:
+                    break
+                else:
+                    raise NumDiffError('incompatible file length')
+            if stopped1:
+                raise NumDiffError('incompatible file length')
             if line1[0] == line2[0]:
                 self.context.append(line1)
             else:
@@ -181,7 +196,7 @@ class NumDiff(object):
     def splitline(line):
         """Split line into tokens to be evaluated.
 """
-        return line.split()
+        return NumDiff.linesplit.split(line)
 
     def fequals(self, float1, float2):
         """Check for arguments beeing numerical equal.
