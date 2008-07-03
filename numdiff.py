@@ -10,9 +10,9 @@ numerical diff for text files
 :copyright: Copyright (C) 2005 by Germanischer Lloyd AG
 """
 
-#  CVSID: $Id: numdiff.py,v 1.5 2008-07-03 07:40:24 hoel Exp $
-__date__      = u"$Date: 2008-07-03 07:40:24 $"[5:-1]
-__version__   = "$Revision: 1.5 $"[10:-1]
+#  CVSID: $Id: numdiff.py,v 1.6 2008-07-03 07:41:32 hoel Exp $
+__date__      = u"$Date: 2008-07-03 07:41:32 $"[5:-1]
+__version__   = "$Revision: 1.6 $"[10:-1]
 __docformat__ = "restructuredtext en"
 
 import copy
@@ -21,7 +21,7 @@ import sys
 from itertools import izip
 from optparse import OptionParser
 
-import numpy.oldnumeric as N
+import numpy as N
 
 _float = re.compile(r"[-+]?(\d+(\.\d*)?|\d*\.\d+)([eE][-+]?\d+)?")
 _int   = re.compile(r"[-+]?\d+(?![.eE])")
