@@ -1,29 +1,19 @@
 #! /usr/bin/env python
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 
-# Copyright (C) 2005 by Germanischer Lloyd AG
+u"""
+numerical diff for text files
 
-"""
-$Header: /data/tmp/hoel/tmp/cvstmp/numdiff/numdiff.py,v 1.4 2007-12-12 14:34:09 hoel Exp $
-
-======================================================================
-Module    numdiff
-Task      numerical diff for text files
-----------------------------------------------------------------------
-Author    Berthold Höllmann <hoel@GL-Group.com>
-Project   numdiff
-----------------------------------------------------------------------
-Status    $State: Exp $
-Date      $Date: 2007-12-12 14:34:09 $
-======================================================================
+:author: `Berthold HÃ¶llmann <berthold.hoellmann@gl-group.com>`__
+:newfield project: Project
+:project: numdiff
+:copyright: Copyright (C) 2005 by Germanischer Lloyd AG
 """
 
-#  CVSID: $Id: numdiff.py,v 1.4 2007-12-12 14:34:09 hoel Exp $
-__author__       = ("2005 Germanischer Lloyd (author: $Author: hoel $) " +
-                    "hoel@GL-Group.com")
-__date__         = "$Date: 2007-12-12 14:34:09 $"
-__version__      = "$Revision: 1.4 $"[10:-1]
-__package_info__ = """ """
+#  CVSID: $Id: numdiff.py,v 1.5 2008-07-03 07:40:24 hoel Exp $
+__date__      = u"$Date: 2008-07-03 07:40:24 $"[5:-1]
+__version__   = "$Revision: 1.5 $"[10:-1]
+__docformat__ = "restructuredtext en"
 
 import copy
 import re
@@ -31,7 +21,7 @@ import sys
 from itertools import izip
 from optparse import OptionParser
 
-import Numeric as N
+import numpy.oldnumeric as N
 
 _float = re.compile(r"[-+]?(\d+(\.\d*)?|\d*\.\d+)([eE][-+]?\d+)?")
 _int   = re.compile(r"[-+]?\d+(?![.eE])")
@@ -252,6 +242,9 @@ reported. Default: %default""")
 if __name__ == "__main__":
     main()
 
-# Local Variables:;
-# compile-command:"python setup.py build";
-# End:;
+# Local Variables:
+# mode:python
+# mode:flyspell
+# compile-command:"python setup.py build"
+# End:
+
