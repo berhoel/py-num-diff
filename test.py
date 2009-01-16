@@ -4,7 +4,7 @@
 # Copyright (C) 2005 by Germanischer Lloyd AG
 
 """
-$Header: /data/tmp/hoel/tmp/cvstmp/numdiff/test.py,v 1.3 2007-12-12 14:34:09 hoel Exp $
+$Header: /usr/local/gltools/cvsroot/src/numdiff/test.py,v 1.3 2007/12/12 14:34:09 hoel Exp $
 
 ======================================================================
 Module    test
@@ -14,14 +14,14 @@ Author    Berthold Höllmann <hoel@GL-Group.com>
 Project   numdiff
 ----------------------------------------------------------------------
 Status    $State: Exp $
-Date      $Date: 2007-12-12 14:34:09 $
+Date      $Date: 2007/12/12 14:34:09 $
 ======================================================================
 """
 
-#  CVSID: $Id: test.py,v 1.3 2007-12-12 14:34:09 hoel Exp $
+#  CVSID: $Id: test.py,v 1.3 2007/12/12 14:34:09 hoel Exp $
 __author__       = ("2005 Germanischer Lloyd (author: $Author: hoel $) " +
                     "hoel@GL-Group.com")
-__date__         = "$Date: 2007-12-12 14:34:09 $"
+__date__         = "$Date: 2007/12/12 14:34:09 $"
 __version__      = "$Revision: 1.3 $"[10:-1]
 __package_info__ = """ """
 

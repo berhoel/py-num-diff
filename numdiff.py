@@ -10,12 +10,14 @@ numerical diff for text files
 :copyright: Copyright (C) 2005 by Germanischer Lloyd AG
 """
 
-#  CVSID: $Id: numdiff.py,v 1.6 2008-07-03 07:41:32 hoel Exp $
-__date__      = u"$Date: 2008-07-03 07:41:32 $"[5:-1]
+#  CVSID: $Id: numdiff.py,v 1.6 2008/07/03 07:41:32 hoel Exp $
+__date__      = u"$Date: 2008/07/03 07:41:32 $"[5:-1]
 __version__   = "$Revision: 1.6 $"[10:-1]
 __docformat__ = "restructuredtext en"
 
 import copy
+import os
+import os.path
 import re
 import sys
 from itertools import izip
@@ -36,10 +38,11 @@ class CFile(object):
     """Class for providing file information with ability to ignore
 comment lines.
 """
-
-    def __init__(self, fileObj, iscomment):
+    ws = re.compile("\s+")
+    def __init__(self, fileObj, iscomment, ignore_space=False):
         self.fileObj = fileObj
         self.iscomment = iscomment
+        self.ignore_space = ignore_space
         self.line = 0
 
     def __iter__(self):
@@ -47,6 +50,8 @@ comment lines.
             self.line += 1
             if self.iscomment(i):
                 continue
+            if self.ignore_space:
+                i = " ".join(CFile.ws.split(i.strip()))
             yield i, self.line
 
 class RrList(object):
@@ -105,7 +110,7 @@ class DiffContext(object):
         list = self.current.list()
         if list or line == 1:
             self.reportTo.write('--- line %d ---\n' % (line-len(list), ))
-            self.reportTo.write('%s' % ('  '.join(list)))
+            self.reportTo.write('  %s' % ('  '.join(list)))
         self.reportTo.write('< %s' % (item1))
         self.reportTo.write('> %s' % (item2))
         self.current.clear()
@@ -133,8 +138,12 @@ class NumDiff(object):
     def compare(self, fileA, fileB):
         """call the necessary methods
 """
-        content1 = iter(CFile(fileA, self.iscomment))
-        content2 = iter(CFile(fileB, self.iscomment))
+        content1 = iter(
+            CFile(fileA, self.iscomment,
+                  self.options.get("ignore_space", False)))
+        content2 = iter(
+            CFile(fileB,
+                  self.iscomment, self.options.get("ignore_space", False)))
         foundError = False
         stopped1 = False
         while 1:
@@ -222,6 +231,10 @@ numerial comparisons. Default: %default""")
                        type="int", default="3", metavar="<LINES>",
                        help="""Number of context lines to be
 reported. Default: %default""")
+    parser.add_option ("-b", "--ignore-space-change",
+                       action="store_true",
+                       help="""Ignore changes in the amount of
+white space.""")
 
     (options, args) = parser.parse_args()
 
@@ -229,12 +242,16 @@ reported. Default: %default""")
         parser.error("incorrect number of arguments")
 
     file1 = file(args[0])
-    file2 = file(args[1])
+    if os.path.isdir(args[1]):
+        file2 = file(os.path.join(args[1], os.path.split(args[0])[-1]))
+    else:
+        file2 = file(args[1])
     worker = NumDiff(cline=" ".join(sys.argv),
                      options=dict(cchars=options.comment_char,
                                   aeps=options.aeps,
                                   reps=options.reps,
-                                  context=options.context))
+                                  context=options.context,
+                                  ignore_space=options.ignore_space_change))
     worker.compare(file1, file2)
     file1.close()
     file2.close()
@@ -245,6 +262,5 @@ if __name__ == "__main__":
 # Local Variables:
 # mode:python
 # mode:flyspell
-# compile-command:"python setup.py build"
+# compile-command:"make test"
 # End:
-
