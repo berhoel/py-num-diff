@@ -23,10 +23,10 @@ import sys
 from itertools import izip
 from optparse import OptionParser
 
-import numpy as N
+import numpy as np
 
-_float = re.compile(r"[-+]?(\d+(\.\d*)?|\d*\.\d+)([eE][-+]?\d+)?")
-_int   = re.compile(r"[-+]?\d+(?![.eE])")
+_float = re.compile(r"\s*[-+]?(\d+(\.\d*)?|\d*\.\d+)([eE][-+]?\d+)?\s*")
+_int   = re.compile(r"\s*[-+]?\d+(?![.eE])\s*")
 
 class NumDiffError(SystemExit):
     """Standard Error indicator for NumDiff
@@ -51,8 +51,9 @@ comment lines.
             if self.iscomment(i):
                 continue
             if self.ignore_space:
-                i = " ".join(CFile.ws.split(i.strip()))
-            yield i, self.line
+                yield " ".join(CFile.ws.split(i.strip())), i, self.line
+            else:
+                yield i, i, self.line
 
 class RrList(object):
     """Special list object that holds at most maxlen entries.
@@ -110,7 +111,8 @@ class DiffContext(object):
         list = self.current.list()
         if list or line == 1:
             self.reportTo.write('--- line %d ---\n' % (line-len(list), ))
-            self.reportTo.write('  %s' % ('  '.join(list)))
+            if list:
+                self.reportTo.write('  %s' % ('  '.join(list)))
         self.reportTo.write('< %s' % (item1))
         self.reportTo.write('> %s' % (item2))
         self.current.clear()
@@ -128,6 +130,11 @@ class NumDiff(object):
         self.reps = self.options.get('reps', 1e-5)
         self.context = DiffContext(self.options.get('context', 5),
                                    cline=cline)
+        if self.options.get('splitre') is not None:
+            self.linesplit = re.compile(self.options['splitre'])
+        self.ignore = None
+        if self.options.get('ignore') is not None:
+            self.ignore = re.compile(self.options['ignore'])
 
     def iscomment(self, line):
         """is argument line a comment line?
@@ -160,16 +167,21 @@ class NumDiff(object):
                     raise NumDiffError('incompatible file length')
             if stopped1:
                 raise NumDiffError('incompatible file length')
-            if line1[0] == line2[0]:
-                self.context.append(line1)
+            if self.ignore is not None and self.ignore.search(line1[0]) and self.ignore.search(line2[0]):
+                continue
+            elif line1[0] == line2[0]:
+                self.context.append(line1[1:])
             else:
                 sLine1 = self.splitline(line1[0])
                 sLine2 = self.splitline(line2[0])
                 if len(sLine1) != len(sLine2):
-                    self.context.append(line1, line2[0])
+                    self.context.append(line1[1:], line2[1])
                     foundError = True
                     continue
                 for token1, token2 in izip(sLine1, sLine2):
+                    if self.options.get("ignore_space", False):
+                        token1 = token1.strip()
+                        token2 = token2.strip()
                     if token1 == token2:
                         continue
                     elif _float.match(token1) or _float.match(token2):
@@ -182,25 +194,24 @@ class NumDiff(object):
                         if self.fequals(int(token1), int(token2)):
                             continue
 
-                    self.context.append(line1, line2[0])
+                    self.context.append(line1[1:], line2[1])
                     foundError = True
                     break
                 else:
-                    self.context.append(line1)
+                    self.context.append(line1[1:])
         if foundError:
             raise NumDiffError(1)
 
 
-    @staticmethod
-    def splitline(line):
+    def splitline(self, line):
         """Split line into tokens to be evaluated.
 """
-        return NumDiff.linesplit.split(line)
+        return self.linesplit.split(line)
 
     def fequals(self, float1, float2):
         """Check for arguments beeing numerical equal.
 """
-        return N.allclose(float1, float2, self.reps, self.aeps)
+        return np.allclose(float1, float2, self.reps, self.aeps)
 
 def main():
     """Main program. Used when called on command line.
@@ -235,7 +246,13 @@ reported. Default: %default""")
                        action="store_true",
                        help="""Ignore changes in the amount of
 white space.""")
-
+    parser.add_option ("-s", "--splitre",
+                       type="str", default=None,
+                       help="""python regular expression used to split
+lines before checking for numerical changes""")
+    parser.add_option ("-I", "--ignore-matching-lines", metavar="RE",
+                       type="str", default=None,
+                       help="""Ignore changes whose lines all match RE.""")
     (options, args) = parser.parse_args()
 
     if len(args) != 2:
@@ -251,7 +268,9 @@ white space.""")
                                   aeps=options.aeps,
                                   reps=options.reps,
                                   context=options.context,
-                                  ignore_space=options.ignore_space_change))
+                                  ignore_space=options.ignore_space_change,
+                                  splitre=options.splitre,
+                                  ignore=options.ignore_matching_lines))
     worker.compare(file1, file2)
     file1.close()
     file2.close()
