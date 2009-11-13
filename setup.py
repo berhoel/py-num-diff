@@ -23,7 +23,11 @@ __date__         = "$Date: 2008/07/03 07:40:24 $"
 __version__      = "$Revision: 1.2 $"[10:-1]
 __package_info__ = """ """
 
+import re
 from distutils.core import setup
+from distutils.command import build_scripts
+
+build_scripts.first_line_re = re.compile(r'^###!.*python(\s+.*)?$')
 
 setup(name='numdiff',
       version='1.1',

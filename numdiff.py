@@ -128,8 +128,11 @@ class NumDiff(object):
             self.options = options
         self.aeps = self.options.get('aeps', 1e-8)
         self.reps = self.options.get('reps', 1e-5)
-        self.context = DiffContext(self.options.get('context', 5),
-                                   cline=cline)
+        if self.options.get('brief', False):
+            self.context = None
+        else:
+            self.context = DiffContext(self.options.get('context', 5),
+                                       cline=cline)
         if self.options.get('splitre') is not None:
             self.linesplit = re.compile(self.options['splitre'])
         self.ignore = None
@@ -170,12 +173,14 @@ class NumDiff(object):
             if self.ignore is not None and self.ignore.search(line1[0]) and self.ignore.search(line2[0]):
                 continue
             elif line1[0] == line2[0]:
-                self.context.append(line1[1:])
+                if self.context is not None:
+                    self.context.append(line1[1:])
             else:
                 sLine1 = self.splitline(line1[0])
                 sLine2 = self.splitline(line2[0])
                 if len(sLine1) != len(sLine2):
-                    self.context.append(line1[1:], line2[1])
+                    if self.context is not None:
+                        self.context.append(line1[1:], line2[1])
                     foundError = True
                     continue
                 for token1, token2 in izip(sLine1, sLine2):
@@ -194,13 +199,19 @@ class NumDiff(object):
                         if self.fequals(int(token1), int(token2)):
                             continue
 
-                    self.context.append(line1[1:], line2[1])
+                    if self.context is not None:
+                        self.context.append(line1[1:], line2[1])
                     foundError = True
                     break
                 else:
-                    self.context.append(line1[1:])
+                    if self.context is not None:
+                        self.context.append(line1[1:])
         if foundError:
-            raise NumDiffError(1)
+            if self.context is not None:
+                raise NumDiffError(1)
+            else:
+                raise NumDiffError("Files %s and %s differ." % (fileA, fileB))
+
 
 
     def splitline(self, line):
@@ -253,6 +264,9 @@ lines before checking for numerical changes""")
     parser.add_option ("-I", "--ignore-matching-lines", metavar="RE",
                        type="str", default=None,
                        help="""Ignore changes whose lines all match RE.""")
+    parser.add_option ("-q", "--brief",
+                       action="store_true",
+                       help="""Output only whether files differ.""")
     (options, args) = parser.parse_args()
 
     if len(args) != 2:
@@ -270,7 +284,8 @@ lines before checking for numerical changes""")
                                   context=options.context,
                                   ignore_space=options.ignore_space_change,
                                   splitre=options.splitre,
-                                  ignore=options.ignore_matching_lines))
+                                  ignore=options.ignore_matching_lines,
+                                  brief=options.brief))
     worker.compare(file1, file2)
     file1.close()
     file2.close()
