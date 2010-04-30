@@ -14,15 +14,15 @@ Author    Berthold Höllmann <hoel@GL-Group.com>
 Project   numdiff
 ----------------------------------------------------------------------
 Status    $State: Exp $
-Date      $Date: 2007/12/12 14:34:09 $
+Date      $Date$
 ======================================================================
 """
 
-#  CVSID: $Id: test.py,v 1.3 2007/12/12 14:34:09 hoel Exp $
-__author__       = ("2005 Germanischer Lloyd (author: $Author: hoel $) " +
+#  CVSID: $Id$
+__author__       = ("2005 Germanischer Lloyd (author: $Author$) " +
                     "hoel@GL-Group.com")
-__date__         = "$Date: 2007/12/12 14:34:09 $"
-__version__      = "$Revision: 1.3 $"[10:-1]
+__date__         = "$Date$"
+__version__      = "$Revision$"[10:-1]
 __package_info__ = """ """
 
 import unittest

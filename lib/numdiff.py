@@ -10,9 +10,9 @@ numerical diff for text files
 :copyright: Copyright (C) 2005 by Germanischer Lloyd AG
 """
 
-#  CVSID: $Id: numdiff.py,v 1.6 2008/07/03 07:41:32 hoel Exp $
-__date__      = u"$Date: 2008/07/03 07:41:32 $"[5:-1]
-__version__   = "$Revision: 1.6 $"[10:-1]
+#  CVSID: $Id$
+__date__      = u"$Date$"[5:-1]
+__version__   = "$Revision$"[10:-1]
 __docformat__ = "restructuredtext en"
 
 import copy

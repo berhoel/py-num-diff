@@ -1,28 +1,21 @@
 #! /usr/bin/env python
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 
-# Copyright (C) 2006 by Germanischer Lloyd AG
+u"""
+setup file for numdiff
 
-"""
-======================================================================
-Module    setup
-Task      setup file for numdiff
-----------------------------------------------------------------------
-Author    Berthold Höllmann <hoel@GL-Group.com>
-Project   numdiff
-----------------------------------------------------------------------
-Status    $State: Exp $
-Date      $Date: 2008/07/03 07:40:24 $
-======================================================================
+:author: `Berthold Hoellmann <hoel@GL-group.com>`__
+:newfield project: Project
+:project: numdiff
+:copyright: Copyright (C) 2006 by Germanischer Lloyd AG
 """
 
-#  CVSID: $Id: setup.py,v 1.2 2008/07/03 07:40:24 hoel Exp $
-__author__       = ("2006 Germanischer Lloyd (author: $Author: hoel $) " +
-                    "hoel@GL-Group.com")
-__date__         = "$Date: 2008/07/03 07:40:24 $"
-__version__      = "$Revision: 1.2 $"[10:-1]
-__package_info__ = """ """
+# ID: $Id$
+__date__      = u"$Date$"[5:-1]
+__version__   = "$Revision$"[10:-1]
+__docformat__ = "restructuredtext en"
 
+import os.path
 import re
 from distutils.core import setup
 from distutils.command import build_scripts
@@ -32,12 +25,15 @@ build_scripts.first_line_re = re.compile(r'^###!.*python(\s+.*)?$')
 setup(name='numdiff',
       version='1.1',
       description="Numrical diff, written in Python",
-      author='B. Höllmann',
+      author='B. HÃ¶llmann',
       author_email="hoel@GL-Group.com",
+      package_dir={'': 'lib'},
       py_modules=['numdiff'],
-      scripts=['numdiff'],
+      scripts=[os.path.join('app', 'numdiff')],
       )
 
-# Local Variables:;
-# compile-command:"python setup.py build";
-# End:;
+# Local Variables:
+# mode:python
+# mode:flyspell
+# compile-command:"python setup.py build"
+# End:
