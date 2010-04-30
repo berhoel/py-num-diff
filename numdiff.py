@@ -25,8 +25,8 @@ from optparse import OptionParser
 
 import numpy as np
 
-_float = re.compile(r"\s*[-+]?(\d+(\.\d*)?|\d*\.\d+)([eE][-+]?\d+)?\s*")
-_int   = re.compile(r"\s*[-+]?\d+(?![.eE])\s*")
+_FLOAT = re.compile(r"\s*[-+]?(\d+(\.\d*)?|\d*\.\d+)([eE][-+]?\d+)?\s*")
+_INT   = re.compile(r"\s*[-+]?\d+(?![.eE])\s*")
 
 class NumDiffError(SystemExit):
     """Standard Error indicator for NumDiff
@@ -108,11 +108,11 @@ class DiffContext(object):
 
     def report(self, line, item1, item2):
         "error report"
-        list = self.current.list()
-        if list or line == 1:
-            self.reportTo.write('--- line %d ---\n' % (line-len(list), ))
-            if list:
-                self.reportTo.write('  %s' % ('  '.join(list)))
+        replist = self.current.list()
+        if replist or line == 1:
+            self.reportTo.write('--- line %d ---\n' % (line-len(replist), ))
+            if replist:
+                self.reportTo.write('  %s' % ('  '.join(replist)))
         self.reportTo.write('< %s' % (item1))
         self.reportTo.write('> %s' % (item2))
         self.current.clear()
@@ -170,7 +170,9 @@ class NumDiff(object):
                     raise NumDiffError('incompatible file length')
             if stopped1:
                 raise NumDiffError('incompatible file length')
-            if self.ignore is not None and self.ignore.search(line1[0]) and self.ignore.search(line2[0]):
+            if (self.ignore is not None and
+                self.ignore.search(line1[0]) and
+                self.ignore.search(line2[0])):
                 continue
             elif line1[0] == line2[0]:
                 if self.context is not None:
@@ -189,13 +191,13 @@ class NumDiff(object):
                         token2 = token2.strip()
                     if token1 == token2:
                         continue
-                    elif _float.match(token1) or _float.match(token2):
+                    elif _FLOAT.match(token1) or _FLOAT.match(token2):
                         try:
                             if self.fequals(float(token1), float(token2)):
                                 continue
                         except ValueError:
                             pass
-                    elif _int.match(token1) or _int.match(token2):
+                    elif _INT.match(token1) or _INT.match(token2):
                         if self.fequals(int(token1), int(token2)):
                             continue
 
@@ -211,8 +213,6 @@ class NumDiff(object):
                 raise NumDiffError(1)
             else:
                 raise NumDiffError("Files %s and %s differ." % (fileA, fileB))
-
-
 
     def splitline(self, line):
         """Split line into tokens to be evaluated.
