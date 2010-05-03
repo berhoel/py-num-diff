@@ -10,9 +10,10 @@
 # Project   numdiff
 # ======================================================================
 
-from numdiff import main
-main()
+from numdiff import Main
+MAIN = Main()
+raise SystemExit(MAIN())
 
 # Local Variables:;
-# compile-command:"make test";
+# compile-command:"make -C ../test test";
 # End:;
