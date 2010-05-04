@@ -14,6 +14,7 @@ from __future__ import absolute_import
 
 import copy
 import difflib
+import fnmatch
 import os
 import os.path
 import re
@@ -57,14 +58,6 @@ comment lines.
             else:
                 yield i#, i, self.line
 
-class ReDummy(object):
-    """Dummy class to be used when no real regular expression is to be given."""
-    @staticmethod
-    def match(dummy):
-        """Dummy match method.
-"""
-        return None
-
 class Main():
     """Main program. Used when called on command line.
 """
@@ -77,7 +70,8 @@ Compare two text files with taking into account numerical errors.
         self.options = None
         self.args = None
         self.optdict = {}
-        self.exclude = ReDummy()
+        self.exclude = lambda x:None
+        self.ignore_matching_lines = lambda x:None
         self.differ = None
 
     def __call__(self):
@@ -88,7 +82,6 @@ Compare two text files with taking into account numerical errors.
                  reps=self.options.reps,
                  ignore_space=self.options.ignore_space_change,
                  splitre=self.options.splitre,
-                 ignore=self.options.ignore_matching_lines,
                  brief=self.options.brief))
         if self.options.recursive:
             result = self.deepcheck(*self.args)
@@ -136,7 +129,7 @@ tree for the base dir part `iDir`.
 >>> print w.shorttree(iDir='ref/1', *('ref/1/1/.svn', ['text-base', 'prop-base', 'props', 'tmp'],
 ...                                   ['entries', 'all-wcprops']))
 ['1/.svn/text-base', '1/.svn/prop-base', '1/.svn/props', '1/.svn/tmp', '1/.svn/entries', '1/.svn/all-wcprops']
->>> w.exclude = re.compile(r'\.svn')
+>>> w.exclude = re.compile(r'\.svn').match
 >>> print w.shorttree(iDir='ref/1', *('ref/1', ['1', '.svn'], ['2', '3', '4']))
 ['1', '2', '3', '4']
 >>> print w.shorttree(iDir='ref/1', *('ref/1/1', ['.svn'], []))
@@ -145,7 +138,7 @@ tree for the base dir part `iDir`.
 ...                                   ['entries', 'all-wcprops']))
 []
 """
-        if self.exclude.match(os.path.split(base)[-1]):
+        if self.exclude(os.path.split(base)[-1]):
             return []
 
         if iDir.endswith(os.path.sep):
@@ -155,7 +148,7 @@ tree for the base dir part `iDir`.
         lBase = base[i:]
         return [ os.path.join(lBase, i)
                  for i in dirs+fnames
-                 if not self.exclude.match(i) ]
+                 if not self.exclude(i) ]
 
     @staticmethod
     def lstcomp(lst1, lst2):
@@ -212,8 +205,9 @@ by `None`.
     def iscomment(self, line):
         """is argument line a comment line?
 """
-        return (bool(self.optdict.get('cchars', '#')) and
-                line.startswith(self.optdict.get('cchars', '#')))
+        return ((bool(self.optdict.get('cchars', '#')) and
+                 line.startswith(self.optdict.get('cchars', '#'))) or
+                self.ignore_matching_lines(line))
 
     def dirtreecomp(self, dir1, dir2):
         """Compare two directory trees for common enties.
@@ -225,18 +219,18 @@ by `None`.
         for xtree1, xtree2 in izip(tree1, tree2):
             dirs, files = xtree1[1:]
             for i in dirs[::-1]:
-                if self.exclude.match(i):
+                if self.exclude(i):
                     dirs.remove(i)
             for i in files[::-1]:
-                if self.exclude.match(i):
+                if self.exclude(i):
                     files.remove(i)
             res_tree1 += self.shorttree(iDir=dir1, *xtree1)
             dirs, files = xtree2[1:]
             for i in dirs[::-1]:
-                if self.exclude.match(i):
+                if self.exclude(i):
                     dirs.remove(i)
             for i in files[::-1]:
-                if self.exclude.match(i):
+                if self.exclude(i):
                     files.remove(i)
             res_tree2 += self.shorttree(iDir=dir2, *xtree2)
         return self.lstcomp(res_tree1, res_tree2)
@@ -323,7 +317,7 @@ found."""),
                          action='append', help="""\
 Exclude files that match PAT."""),
             make_option ("-I", "--ignore-matching-lines", metavar="RE",
-                         type="str", default=None,
+                         type="str", default=[], action='append',
                          help="""Ignore changes whose lines all match RE."""),
             make_option ("-q", "--brief",
                          action="store_true",
@@ -338,7 +332,10 @@ Exclude files that match PAT."""),
             parser.error("incorrect number of arguments")
 
         if self.options.exclude:
-            self.exclude = re.compile('|'.join(self.options.exclude))
+            self.exclude = re.compile('|'.join([fnmatch.translate(i) for i in self.options.exclude])).match
+
+        if self.options.ignore_matching_lines:
+            self.ignore_matching_lines = re.compile('|'.join(self.options.ignore_matching_lines)).search
 
 def _test():
     """
