@@ -28,7 +28,7 @@ setup(name='numdiff',
       author='B. Höllmann',
       author_email="hoel@GL-Group.com",
       package_dir={'': 'lib'},
-      py_modules=['numdiff'],
+      packages=['numdiff'],
       scripts=[os.path.join('app', 'numdiff')],
       )
 
