@@ -23,12 +23,20 @@ _FLOAT = re.compile(r"\s*[-+]?(\d+(\.\d*)?|\d*\.\d+)([eE][-+]?\d+)?\s*")
 _INT   = re.compile(r"\s*[-+]?\d+(?![.eE])\s*")
 
 class CmpLine(object):
+    """Representing test lines to be compared.
+
+Tries literal comparison of lines first. If this fails, tries
+numerical comparison.
+"""
 
     linesplit = re.compile(r' *, *| +')
 
-    def __init__(self, line, options={}):
+    def __init__(self, line, options=None):
         self.line = line
-        self.options = options
+        if options is None:
+            self.options = {}
+        else:
+            self.options = options
         self.value = self.line
         if self.options.get('ignore_space_change'):
             self.value = self.value.strip()
@@ -102,9 +110,9 @@ run doctests
 """
     import doctest
 
-    import cmpline
+    module = __import__(__name__)
 
-    (failed, dummy) = doctest.testmod(cmpline, verbose=True)
+    (failed, dummy) = doctest.testmod(module, verbose=True)
     if failed != 0:
         raise SystemExit(10)
 

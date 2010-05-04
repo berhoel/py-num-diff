@@ -14,7 +14,6 @@ from __future__ import absolute_import
 
 import copy
 import difflib
-import glob
 import os
 import os.path
 import re
@@ -24,7 +23,7 @@ from optparse import OptionParser, make_option
 
 import numpy as np
 
-from .files import fileFactory, RegularFile
+from .files import fileFactory, RegularFile, Directory
 from .cmpline import CmpLine
 
 #  CVSID: $Id$
@@ -58,6 +57,14 @@ comment lines.
             else:
                 yield i#, i, self.line
 
+class ReDummy(object):
+    """Dummy class to be used when no real regular expression is to be given."""
+    @staticmethod
+    def match(dummy):
+        """Dummy match method.
+"""
+        return None
+
 class Main():
     """Main program. Used when called on command line.
 """
@@ -70,6 +77,8 @@ Compare two text files with taking into account numerical errors.
         self.options = None
         self.args = None
         self.optdict = {}
+        self.exclude = ReDummy()
+        self.differ = None
 
     def __call__(self):
         self.parse_cmdline()
@@ -77,7 +86,6 @@ Compare two text files with taking into account numerical errors.
             dict(cchars=self.options.comment_char,
                  aeps=self.options.aeps,
                  reps=self.options.reps,
-                 context=self.options.context,
                  ignore_space=self.options.ignore_space_change,
                  splitre=self.options.splitre,
                  ignore=self.options.ignore_matching_lines,
@@ -109,33 +117,45 @@ Compare two text files with taking into account numerical errors.
         res = ''.join(difflib.context_diff(lines1, lines2,
                                            file1, file2,
                                            n=self.optdict.get('context', 3)))
-        print res,
+        if bool(res):
+           if self.options.brief:
+               print "Files %s and %s differ" % (file1, file2)
+           else:
+               print res,
         return bool(res)
 
-        worker = NumDiff(cline=" ".join(sys.argv),
-                         options=self.optdict)
-        result = worker.compare(file1, file2)
-        return result
-
-    @staticmethod
-    def deepglob(iDir):
-        """Glob for whole directory subtree.
-"""
-        oDir = glob.glob(os.path.join(iDir, '*'))
-        [ oDir.extend(glob.iglob(os.path.join(i, '*')))
-          for i in oDir if os.path.isdir(i) ]
-        return oDir
-
-    @staticmethod
-    def shorttree(tree, iDir):
+    def shorttree(self, base, dirs, fnames, iDir):
         """Shorten list `tree` with entries from parsing a directory
 tree for the base dir part `iDir`.
+
+>>> w = Main()
+>>> print w.shorttree(iDir='ref/1', *('ref/1', ['1', '.svn'], ['2', '3', '4']))
+['1', '.svn', '2', '3', '4']
+>>> print w.shorttree(iDir='ref/1', *('ref/1/1', ['.svn'], []))
+['1/.svn']
+>>> print w.shorttree(iDir='ref/1', *('ref/1/1/.svn', ['text-base', 'prop-base', 'props', 'tmp'],
+...                                   ['entries', 'all-wcprops']))
+['1/.svn/text-base', '1/.svn/prop-base', '1/.svn/props', '1/.svn/tmp', '1/.svn/entries', '1/.svn/all-wcprops']
+>>> w.exclude = re.compile(r'\.svn')
+>>> print w.shorttree(iDir='ref/1', *('ref/1', ['1', '.svn'], ['2', '3', '4']))
+['1', '2', '3', '4']
+>>> print w.shorttree(iDir='ref/1', *('ref/1/1', ['.svn'], []))
+[]
+>>> print w.shorttree(iDir='ref/1', *('ref/1/1/.svn', ['text-base', 'prop-base', 'props', 'tmp'],
+...                                   ['entries', 'all-wcprops']))
+[]
 """
+        if self.exclude.match(os.path.split(base)[-1]):
+            return []
+
         if iDir.endswith(os.path.sep):
             i = len(iDir)
         else:
             i = len(iDir)+1
-        return [ j[i:] for j in tree ]
+        lBase = base[i:]
+        return [ os.path.join(lBase, i)
+                 for i in dirs+fnames
+                 if not self.exclude.match(i) ]
 
     @staticmethod
     def lstcomp(lst1, lst2):
@@ -198,21 +218,37 @@ by `None`.
     def dirtreecomp(self, dir1, dir2):
         """Compare two directory trees for common enties.
 """
-        tree1 = self.deepglob(dir1)
-        tree2 = self.deepglob(dir2)
-        xtree1 = self.shorttree(tree1, dir1)
-        xtree2 = self.shorttree(tree2, dir2)
-        for i in xtree1:
-            pass
-        return self.lstcomp(xtree1, xtree2)
+        tree1 = os.walk(dir1)
+        tree2 = os.walk(dir2)
+        res_tree1 = []
+        res_tree2 = []
+        for xtree1, xtree2 in izip(tree1, tree2):
+            dirs, files = xtree1[1:]
+            for i in dirs[::-1]:
+                if self.exclude.match(i):
+                    dirs.remove(i)
+            for i in files[::-1]:
+                if self.exclude.match(i):
+                    files.remove(i)
+            res_tree1 += self.shorttree(iDir=dir1, *xtree1)
+            dirs, files = xtree2[1:]
+            for i in dirs[::-1]:
+                if self.exclude.match(i):
+                    dirs.remove(i)
+            for i in files[::-1]:
+                if self.exclude.match(i):
+                    files.remove(i)
+            res_tree2 += self.shorttree(iDir=dir2, *xtree2)
+        return self.lstcomp(res_tree1, res_tree2)
 
     @staticmethod
     def onlyIn(base, name):
         """Genereate 'Only In' message.
 
 >>> Main.onlyIn('dir1', 'entry1')
+Only in dir1: entry1.
 """
-        print >> sys.stderr, "Only in %s: %s." % (base, name)
+        print "Only in %s: %s." % (base, name)
 
 
     def deepcheck(self, dir1, dir2):
@@ -222,27 +258,27 @@ by `None`.
             raise ValueError("'%s' is not directory" % dir1)
         if not os.path.isdir(dir2):
             raise ValueError("'%s' is not directory" % dir2)
-        composite = self.dirtreecomp(dir1, dir2)
         failed = False
+        composite = self.dirtreecomp(dir1, dir2)
         for i, j in composite:
             if j is None:
                 self.onlyIn(dir1, i)
+                failed = True
                 continue
             elif i is None:
                 self.onlyIn(dir2, j)
+                failed = True
                 continue
             obj1 = fileFactory(i, dir1)
             obj2 = fileFactory(j, dir2)
-            # print >> sys.stderr, "File %s while file %s" % (obj1, obj2)
-            # print >> sys.stderr, obj1.__class__, obj2.__class__
             if ((obj1.__class__ != obj2.__class__) and
                 not (isinstance(obj1, RegularFile) and
                      isinstance(obj2, RegularFile))):
-                print >> sys.stderr, "File %s while file %s" % (obj1, obj2)
+                print "File %s while file %s" % (obj1, obj2)
                 failed = True
-            else:
-                failed = self.docheck(obj1.name(), obj2.name()) or failed
-        raise NotImplementedError("ERROR ***: Not implemented yet.")
+            elif not isinstance(obj1, Directory):
+                failed = self.docheck(obj1.name, obj2.name) or failed
+        return failed
 
     def parse_cmdline(self):
         """
@@ -256,18 +292,21 @@ Parse command line.
                         help="""Ignore lines starting with the comment
 char when reading either file. Default: Do not ignore any line."""),
             make_option ("-e", "--reps",
-                         type="float", default=1e-5, metavar="<rEPS>",
+                         type="float", default=1e-5, metavar="rEPS",
                          help="""Relative error to be accepted in
 numerial comparisons. Default: %default"""),
             make_option ("-a", "--aeps",
-                         type="float", default=1e-8, metavar="<aEPS>",
+                         type="float", default=1e-8, metavar="aEPS",
                          help="""Relative error to be accepted in
 numerial comparisons. Default: %default"""),
-
             make_option ("-C", "--context",
-                         type="int", default="3", metavar="<LINES>",
-                         help="""Number of context lines to be
-reported. Default: %default"""),
+                         type="int", default="3", metavar="LINES",
+                         help="""\
+Output NUM (default %default) lines of copied context."""),
+#             make_option ("-U", "--unified",
+#                          type="int", default="3", metavar="LINES",
+#                          help="""\
+# Output NUM (default %default) lines of unified context."""),
             make_option ("-b", "--ignore-space-change",
                          action="store_true",
                          help="""Ignore changes in the amount of
@@ -280,7 +319,9 @@ lines before checking for numerical changes"""),
                          default=False, action="store_true",
                          help="""Recursively compare any subdirectories
 found."""),
-
+            make_option ("-x", "--exclude", metavar='PAT', default=[],
+                         action='append', help="""\
+Exclude files that match PAT."""),
             make_option ("-I", "--ignore-matching-lines", metavar="RE",
                          type="str", default=None,
                          help="""Ignore changes whose lines all match RE."""),
@@ -296,15 +337,18 @@ found."""),
         if len(self.args) != 2:
             parser.error("incorrect number of arguments")
 
+        if self.options.exclude:
+            self.exclude = re.compile('|'.join(self.options.exclude))
+
 def _test():
     """
 run doctests
 """
     import doctest
 
-    import numdiff
+    module = __import__(__name__)
 
-    (failed, dummy) = doctest.testmod(numdiff, verbose=True)
+    (failed, dummy) = doctest.testmod(module, verbose=True)
     if failed != 0:
         raise SystemExit(10)
 

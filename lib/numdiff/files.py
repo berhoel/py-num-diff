@@ -23,7 +23,10 @@ class NumDiffFileObject(object):
         self.path = path
         self.base = base
 
+    @property
     def name(self):
+        """Returns filename (property)
+"""
         return os.path.join(self.base, self.path)
 
 class RegularFile(NumDiffFileObject):
@@ -79,9 +82,9 @@ run doctests
 """
     import doctest
 
-    import files
+    module = __import__(__name__)
 
-    (failed, dummy) = doctest.testmod(files, verbose=True)
+    (failed, dummy) = doctest.testmod(module, verbose=True)
     if failed != 0:
         raise SystemExit(10)
 

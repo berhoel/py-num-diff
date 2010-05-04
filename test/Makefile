@@ -83,11 +83,12 @@ dir_test:	$(PY) ref/d1/data.txt ref/d2/data.txt
 	touch $@
 
 recur_test:	$(PY) ref/d1/data.txt ref/d2/data.txt
-	PATH=../app:$(PATH) $(PYPATH) numdiff -r ref/d1 ref/d2
+	PATH=../app:$(PATH) $(PYPATH) numdiff -r ref/d1 ref/d2 --exclude=.svn
 	touch $@
 
 recur2_test:	$(PY) ref/d1/data.txt ref/d2/data.txt
-	PATH=../app:$(PATH) $(PYPATH) numdiff -r ref/1 ref/2
+	-PATH=../app:$(PATH) $(PYPATH) numdiff -r ref/1 ref/2 --exclude=.svn > $@.txt
+	diff $@.txt ref
 	touch $@
 
 split_test:	$(PY) ref/stest1.txt ref/stest2.txt
