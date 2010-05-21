@@ -54,9 +54,9 @@ comment lines.
             if self.iscomment(i):
                 continue
             if self.ignore_space:
-                yield " ".join(CFile.ws.split(i.strip()))#, i, self.line
+                yield " ".join(CFile.ws.split(i.strip())) + '\n'
             else:
-                yield i#, i, self.line
+                yield i
 
 class Main():
     """Main program. Used when called on command line.
