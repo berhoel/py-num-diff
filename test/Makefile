@@ -1,4 +1,4 @@
-	# Copyright (C) 2006 by Germanischer Lloyd AG
+# Copyright (C) 2006 by Germanischer Lloyd AG
 
 # ======================================================================
 # Task      testing tasks for numdiff
