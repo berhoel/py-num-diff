@@ -145,7 +145,7 @@ tree for the base dir part `iDir`.
 >>> print w.shorttree(iDir='ref/1',
 ...                   *('ref/1/1/.svn',
 ...                     ['text-base', 'prop-base', 'props', 'tmp'],
-...                     'entries', 'all-wcprops']))
+...                     ['entries', 'all-wcprops']))
 []
 """
         if self.exclude(os.path.split(base)[-1]):
