@@ -112,7 +112,8 @@ Compare two text files with taking into account numerical errors.
                   for i in CFile(open(file2, 'r'), self.iscomment,
                                  self.optdict.get("ignore_space", False))]
         if self.optdict['mlab']:
-            lines1, lines2 = lines1[6:], lines2[6:]
+            lines1[:6] = [''] * 6
+            lines2[:6] = [''] * 6
         res = ''.join(difflib.context_diff(lines1, lines2,
                                            file1, file2,
                                            n=self.optdict.get('context', 3)))

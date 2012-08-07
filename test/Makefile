@@ -101,15 +101,15 @@ ignore_test:	$(PY) ref/stest1.txt ref/stest2.txt
 	touch $@
 
 numdiff_doctest:	$(PY)
-	$(PYTHON) -c "import numdiff ; numdiff._test()" -v 
+	$(PYTHON) -c "import numdiff ; numdiff._test()" -v
 	touch $@
 
-mlab_test:
+mlab_test:	$(PY) ref/mlab_R2007b ref/mlab_R2012a
 	$(NUMDIFF) --matlab ref/mlab_R2007b ref/mlab_R2012a
 	touch $@
 
 %_doctest:	%.py	$(PY)
-	$(PYTHON) -c "from numdiff import $* ; $*._test()" -v 
+	$(PYTHON) -c "from numdiff import $* ; $*._test()" -v
 	touch $@
 
 clean:
