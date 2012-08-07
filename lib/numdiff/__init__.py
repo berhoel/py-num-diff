@@ -82,7 +82,10 @@ Compare two text files with taking into account numerical errors.
                  reps=self.options.reps,
                  ignore_space=self.options.ignore_space_change,
                  splitre=self.options.splitre,
-                 brief=self.options.brief))
+                 brief=self.options.brief,
+                 mlab=self.options.matlab))
+        if self.options.matlab:
+            self.optdict['ignore_space'] = True
         if self.options.recursive:
             result = self.deepcheck(*self.args)
         else:
@@ -107,6 +110,8 @@ Compare two text files with taking into account numerical errors.
         lines2 = [ CmpLine(i, self.optdict)
                    for i in CFile(open(file2, 'r'), self.iscomment,
                                   self.optdict.get("ignore_space", False)) ]
+        if self.optdict['mlab']:
+            lines1, lines2 = lines1[6:], lines2[6:]
         res = ''.join(difflib.context_diff(lines1, lines2,
                                            file1, file2,
                                            n=self.optdict.get('context', 3)))
@@ -322,6 +327,10 @@ Exclude files that match PAT."""),
             make_option ("-q", "--brief",
                          action="store_true",
                          help="""Output only whether files differ."""),
+            make_option ("--matlab",
+                         action="store_true",
+                         help="""\
+Compare MATLAB output, ignore the first lines."""),
             ]
 
         parser = OptionParser(usage=self.DOC, option_list=option_list)
@@ -332,10 +341,12 @@ Exclude files that match PAT."""),
             parser.error("incorrect number of arguments")
 
         if self.options.exclude:
-            self.exclude = re.compile('|'.join([fnmatch.translate(i) for i in self.options.exclude])).match
+            self.exclude = re.compile('|'.join(
+                [fnmatch.translate(i) for i in self.options.exclude])).match
 
         if self.options.ignore_matching_lines:
-            self.ignore_matching_lines = re.compile('|'.join(self.options.ignore_matching_lines)).search
+            self.ignore_matching_lines = re.compile('|'.join(
+                self.options.ignore_matching_lines)).search
 
 def _test():
     """
