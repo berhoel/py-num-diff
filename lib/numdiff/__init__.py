@@ -12,36 +12,35 @@ numerical diff for text files
 
 from __future__ import absolute_import
 
-import copy
 import difflib
 import fnmatch
 import os
 import os.path
 import re
-import sys
-from itertools import izip, chain, repeat
+from itertools import izip
 from optparse import OptionParser, make_option
-
-import numpy as np
 
 from .files import fileFactory, RegularFile, Directory
 from .cmpline import CmpLine
 
 #  CVSID: $Id$
-__date__      = u"$Date$"[5:-1]
-__version__   = "$Revision$"[10:-1]
+__date__ = u"$Date$"[5:-1]
+__version__ = "$Revision$"[10:-1]
 __docformat__ = "restructuredtext en"
+
 
 class NumDiffError(SystemExit):
     """Standard Error indicator for NumDiff
 """
     pass
 
+
 class CFile(object):
     """Class for providing file information with ability to ignore
 comment lines.
 """
     ws = re.compile("\s+")
+
     def __init__(self, fileObj, iscomment, ignore_space=False):
         self.fileObj = fileObj
         self.iscomment = iscomment
@@ -58,6 +57,7 @@ comment lines.
             else:
                 yield i
 
+
 class Main():
     """Main program. Used when called on command line.
 """
@@ -66,12 +66,13 @@ usage: %prog [OPTIONS] FILE1 FILE2
 
 Compare two text files with taking into account numerical errors.
 """
+
     def __init__(self):
         self.options = None
         self.args = None
         self.optdict = {}
-        self.exclude = lambda x:None
-        self.ignore_matching_lines = lambda x:None
+        self.exclude = lambda x: None
+        self.ignore_matching_lines = lambda x: None
         self.differ = None
 
     def __call__(self):
@@ -104,22 +105,22 @@ Compare two text files with taking into account numerical errors.
     def docheck(self, file1, file2):
         """Initiate comparing of two files.
 """
-        lines1 = [ CmpLine(i, self.optdict)
-                   for i in CFile(open(file1, 'r'), self.iscomment,
-                                  self.optdict.get("ignore_space", False)) ]
-        lines2 = [ CmpLine(i, self.optdict)
-                   for i in CFile(open(file2, 'r'), self.iscomment,
-                                  self.optdict.get("ignore_space", False)) ]
+        lines1 = [CmpLine(i, self.optdict)
+                  for i in CFile(open(file1, 'r'), self.iscomment,
+                                 self.optdict.get("ignore_space", False))]
+        lines2 = [CmpLine(i, self.optdict)
+                  for i in CFile(open(file2, 'r'), self.iscomment,
+                                 self.optdict.get("ignore_space", False))]
         if self.optdict['mlab']:
             lines1, lines2 = lines1[6:], lines2[6:]
         res = ''.join(difflib.context_diff(lines1, lines2,
                                            file1, file2,
                                            n=self.optdict.get('context', 3)))
         if bool(res):
-           if self.options.brief:
-               print "Files %s and %s differ" % (file1, file2)
-           else:
-               print res,
+            if self.options.brief:
+                print "Files %s and %s differ" % (file1, file2)
+            else:
+                print res,
         return bool(res)
 
     def shorttree(self, base, dirs, fnames, iDir):
@@ -131,16 +132,20 @@ tree for the base dir part `iDir`.
 ['1', '.svn', '2', '3', '4']
 >>> print w.shorttree(iDir='ref/1', *('ref/1/1', ['.svn'], []))
 ['1/.svn']
->>> print w.shorttree(iDir='ref/1', *('ref/1/1/.svn', ['text-base', 'prop-base', 'props', 'tmp'],
-...                                   ['entries', 'all-wcprops']))
+>>> print w.shorttree(iDir='ref/1',
+...                   *('ref/1/1/.svn',
+...                     ['text-base', 'prop-base', 'props', 'tmp'],
+...                     ['entries', 'all-wcprops']))
 ['1/.svn/text-base', '1/.svn/prop-base', '1/.svn/props', '1/.svn/tmp', '1/.svn/entries', '1/.svn/all-wcprops']
 >>> w.exclude = re.compile(r'\.svn').match
 >>> print w.shorttree(iDir='ref/1', *('ref/1', ['1', '.svn'], ['2', '3', '4']))
 ['1', '2', '3', '4']
 >>> print w.shorttree(iDir='ref/1', *('ref/1/1', ['.svn'], []))
 []
->>> print w.shorttree(iDir='ref/1', *('ref/1/1/.svn', ['text-base', 'prop-base', 'props', 'tmp'],
-...                                   ['entries', 'all-wcprops']))
+>>> print w.shorttree(iDir='ref/1',
+...                   *('ref/1/1/.svn',
+...                     ['text-base', 'prop-base', 'props', 'tmp'],
+...                     'entries', 'all-wcprops']))
 []
 """
         if self.exclude(os.path.split(base)[-1]):
@@ -149,11 +154,11 @@ tree for the base dir part `iDir`.
         if iDir.endswith(os.path.sep):
             i = len(iDir)
         else:
-            i = len(iDir)+1
+            i = len(iDir) + 1
         lBase = base[i:]
-        return [ os.path.join(lBase, i)
-                 for i in dirs+fnames
-                 if not self.exclude(i) ]
+        return [os.path.join(lBase, i)
+                for i in dirs + fnames
+                if not self.exclude(i)]
 
     @staticmethod
     def lstcomp(lst1, lst2):
@@ -179,7 +184,7 @@ by `None`.
 """
         ilst1 = iter(sorted(lst1))
         ilst2 = iter(sorted(lst2))
-        result =  []
+        result = []
         for el1 in ilst1:
             try:
                 el2 = ilst2.next()
@@ -249,7 +254,6 @@ Only in dir1: entry1.
 """
         print "Only in %s: %s." % (base, name)
 
-
     def deepcheck(self, dir1, dir2):
         """Intiate comparison of files in two directories.
 """
@@ -290,46 +294,46 @@ Parse command line.
                         metavar="<comment char>",
                         help="""Ignore lines starting with the comment
 char when reading either file. Default: Do not ignore any line."""),
-            make_option ("-e", "--reps",
-                         type="float", default=1e-5, metavar="rEPS",
-                         help="""Relative error to be accepted in
+            make_option("-e", "--reps",
+                        type="float", default=1e-5, metavar="rEPS",
+                        help="""Relative error to be accepted in
 numerial comparisons. Default: %default"""),
-            make_option ("-a", "--aeps",
-                         type="float", default=1e-8, metavar="aEPS",
-                         help="""Relative error to be accepted in
+            make_option("-a", "--aeps",
+                        type="float", default=1e-8, metavar="aEPS",
+                        help="""Relative error to be accepted in
 numerial comparisons. Default: %default"""),
-            make_option ("-C", "--context",
-                         type="int", default="3", metavar="LINES",
-                         help="""\
+            make_option("-C", "--context",
+                        type="int", default="3", metavar="LINES",
+                        help="""\
 Output NUM (default %default) lines of copied context."""),
-#             make_option ("-U", "--unified",
-#                          type="int", default="3", metavar="LINES",
-#                          help="""\
+#             make_option("-U", "--unified",
+#                         type="int", default="3", metavar="LINES",
+#                         help="""\
 # Output NUM (default %default) lines of unified context."""),
-            make_option ("-b", "--ignore-space-change",
-                         action="store_true",
-                         help="""Ignore changes in the amount of
+            make_option("-b", "--ignore-space-change",
+                        action="store_true",
+                        help="""Ignore changes in the amount of
 white space."""),
-            make_option ("-s", "--splitre",
-                         type="str", default=None,
-                         help="""python regular expression used to split
+            make_option("-s", "--splitre",
+                        type="str", default=None,
+                        help="""python regular expression used to split
 lines before checking for numerical changes"""),
-            make_option ("-r", "--recursive",
-                         default=False, action="store_true",
-                         help="""Recursively compare any subdirectories
+            make_option("-r", "--recursive",
+                        default=False, action="store_true",
+                        help="""Recursively compare any subdirectories
 found."""),
-            make_option ("-x", "--exclude", metavar='PAT', default=[],
-                         action='append', help="""\
+            make_option("-x", "--exclude", metavar='PAT', default=[],
+                        action='append', help="""\
 Exclude files that match PAT."""),
-            make_option ("-I", "--ignore-matching-lines", metavar="RE",
-                         type="str", default=[], action='append',
-                         help="""Ignore changes whose lines all match RE."""),
-            make_option ("-q", "--brief",
-                         action="store_true",
-                         help="""Output only whether files differ."""),
-            make_option ("--matlab",
-                         action="store_true",
-                         help="""\
+            make_option("-I", "--ignore-matching-lines", metavar="RE",
+                        type="str", default=[], action='append',
+                        help="""Ignore changes whose lines all match RE."""),
+            make_option("-q", "--brief",
+                        action="store_true",
+                        help="""Output only whether files differ."""),
+            make_option("--matlab",
+                        action="store_true",
+                        help="""\
 Compare MATLAB output, ignore the first lines."""),
             ]
 
@@ -347,6 +351,7 @@ Compare MATLAB output, ignore the first lines."""),
         if self.options.ignore_matching_lines:
             self.ignore_matching_lines = re.compile('|'.join(
                 self.options.ignore_matching_lines)).search
+
 
 def _test():
     """

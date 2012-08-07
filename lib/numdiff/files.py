@@ -10,11 +10,12 @@ File identifier for numdiff
 :copyright: Copyright (C) 2010 by Germanischer Lloyd AG"""
 
 #  ID: $Id$
-__date__      = u"$Date$"[5:-1]
-__version__   = "$Revision$"[10:-1]
+__date__ = u"$Date$"[5:-1]
+__version__ = "$Revision$"[10:-1]
 __docformat__ = "restructuredtext en"
 
 import os.path
+
 
 class NumDiffFileObject(object):
     """Base class for representing different file kinds.
@@ -29,6 +30,7 @@ class NumDiffFileObject(object):
 """
         return os.path.join(self.base, self.path)
 
+
 class RegularFile(NumDiffFileObject):
     """
 >>> a = RegularFile('2', '1')
@@ -38,6 +40,7 @@ class RegularFile(NumDiffFileObject):
     def __str__(self):
         return "%s is a regular file" % os.path.join(self.base, self.path)
 
+
 class EmptyFile(RegularFile):
     """
 >>> a = EmptyFile('2', '1')
@@ -45,7 +48,9 @@ class EmptyFile(RegularFile):
 1/2 is a regular empty file
 """
     def __str__(self):
-        return "%s is a regular empty file" % os.path.join(self.base, self.path)
+        return "%s is a regular empty file" % os.path.join(
+            self.base, self.path)
+
 
 class Directory(NumDiffFileObject):
     """
@@ -55,6 +60,7 @@ class Directory(NumDiffFileObject):
 """
     def __str__(self):
         return "%s is a directory" % os.path.join(self.base, self.path)
+
 
 def fileFactory(path, base):
 
@@ -75,6 +81,7 @@ call1_test is a regular empty file
     elif statinfo.st_size == 0:
         return EmptyFile(path, base)
     return RegularFile(path, base)
+
 
 def _test():
     """

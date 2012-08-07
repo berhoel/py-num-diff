@@ -12,11 +12,12 @@
 
 SHELL = /bin/sh
 
-IGN = $(shell [ -n "$$(svn propget svn:ignore .)" ] && echo "$$(svn propget svn:ignore .)")
+IGN = $(shell [ -n "$$(svn propget svn:ignore .)" ] && \
+	echo "$$(svn propget svn:ignore .)")
 
 all:	build
 
-test: 
+test:
 	$(MAKE) -C test $@
 
 build:
@@ -34,5 +35,3 @@ clean:
 # compile-command:"make test"
 # coding:utf-8
 # End:
-
-

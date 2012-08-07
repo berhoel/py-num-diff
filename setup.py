@@ -11,8 +11,8 @@ setup file for numdiff
 """
 
 # ID: $Id$
-__date__      = u"$Date$"[5:-1]
-__version__   = "$Revision$"[10:-1]
+__date__ = u"$Date$"[5:-1]
+__version__ = "$Revision$"[10:-1]
 __docformat__ = "restructuredtext en"
 
 import os.path
@@ -24,8 +24,8 @@ build_scripts.first_line_re = re.compile(r'^###!.*python(\s+.*)?$')
 
 setup(name='numdiff',
       version='1.1',
-      description="Numrical diff, written in Python",
-      author='B. Höllmann',
+      description="Numerical diff, written in Python",
+      author=u'B. Höllmann',
       author_email="hoel@GL-Group.com",
       package_dir={'': 'lib'},
       packages=['numdiff'],

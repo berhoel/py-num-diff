@@ -10,8 +10,8 @@ Class for alowing numerical diffing of text lines.
 :copyright: Copyright (C) 2010 by Germanischer Lloyd AG"""
 
 #  ID: $Id$
-__date__      = u"$Date$"[5:-1]
-__version__   = "$Revision$"[10:-1]
+__date__ = u"$Date$"[5:-1]
+__version__ = "$Revision$"[10:-1]
 __docformat__ = "restructuredtext en"
 
 from itertools import izip
@@ -20,7 +20,8 @@ import re
 import numpy as np
 
 _FLOAT = re.compile(r"\s*[-+]?(\d+(\.\d*)?|\d*\.\d+)([eE][-+]?\d+)?\s*")
-_INT   = re.compile(r"\s*[-+]?\d+(?![.eE])\s*")
+_INT = re.compile(r"\s*[-+]?\d+(?![.eE])\s*")
+
 
 class CmpLine(object):
     """Representing test lines to be compared.
@@ -103,6 +104,7 @@ numerical comparison.
 
     def __hash__(self):
         return hash(self.value)
+
 
 def _test():
     """
