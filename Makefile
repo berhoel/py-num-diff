@@ -29,7 +29,7 @@ install:	test
 clean:
 	[ -n "$(IGN)" ] && rm -f $(IGN) || true
 
-.PHONY:	build	install
+.PHONY:	build	test
 
 # Local Variables:
 # compile-command:"make test"
