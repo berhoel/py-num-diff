@@ -84,7 +84,8 @@ Compare two text files with taking into account numerical errors.
                  ignore_space=self.options.ignore_space_change,
                  splitre=self.options.splitre,
                  brief=self.options.brief,
-                 mlab=self.options.matlab))
+                 mlab=self.options.matlab,
+                 verbose=self.options.verbose))
         if self.options.matlab:
             self.optdict['ignore_space'] = True
         if self.options.recursive:
@@ -105,23 +106,30 @@ Compare two text files with taking into account numerical errors.
     def docheck(self, file1, file2):
         """Initiate comparing of two files.
 """
-        lines1 = [CmpLine(i, self.optdict)
+        lines1 = [CmpLine(i.split('\n')[0], self.optdict)
                   for i in CFile(open(file1, 'r'), self.iscomment,
-                                 self.optdict.get("ignore_space", False))]
-        lines2 = [CmpLine(i, self.optdict)
+                                 self.options.ignore_space_change or
+                                 self.options.matlab)]
+        lines2 = [CmpLine(i.split('\n')[0], self.optdict)
                   for i in CFile(open(file2, 'r'), self.iscomment,
-                                 self.optdict.get("ignore_space", False))]
+                                 self.options.ignore_space_change or
+                                 self.options.matlab)]
         if self.optdict['mlab']:
-            lines1[:6] = [''] * 6
-            lines2[:6] = [''] * 6
-        res = ''.join(difflib.context_diff(lines1, lines2,
-                                           file1, file2,
-                                           n=self.optdict.get('context', 3)))
+            lines1[:6] = [CmpLine('', self.optdict)] * 6
+            lines2[:6] = [CmpLine('', self.optdict)] * 6
+        if self.options.verbose:
+            print "lines1:"
+            print ['%s' % i for i in lines1]
+            print "lines2:"
+            print ['%s' % i for i in lines2]
+        res = '\n'.join(difflib.context_diff(
+            lines1, lines2, fromfile=file1, tofile=file2,
+            n=self.options.context, lineterm=''))
         if bool(res):
             if self.options.brief:
                 print "Files %s and %s differ" % (file1, file2)
             else:
-                print res,
+                print res
         return bool(res)
 
     def shorttree(self, base, dirs, fnames, iDir):
@@ -340,7 +348,7 @@ Compare MATLAB output, ignore the first lines."""),
                         action="store_true",
                         help="""\
 Generate verbose output."""),
-            ]
+                        ]
 
         parser = OptionParser(usage=self.DOC, option_list=option_list)
 

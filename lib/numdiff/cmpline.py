@@ -49,40 +49,68 @@ numerical comparison.
         self.aeps = self.options.get('aeps', 1e-8)
         self.reps = self.options.get('reps', 1e-5)
 
-    def __cmp__(self, other):
-        if (self.ignore is not None and
-            self.ignore.search(self.value) and
-            self.ignore.search(other.value)):
-            return 0
-        elif self.value == other.value:
-            return 0
+    def __eq__(self, other):
+        if self.options.get('verbose'):
+            print "__EQ__ !%s! !%s!" % (self.value.split('\n')[0],
+                                         other.value.split('\n')[0])
+        if (self.ignore is not None and self.ignore.search(self.value) and
+              self.ignore.search(other.value)):
+            if self.options.get('verbose'):
+                print "IGNORE !%s! !%s!" % (self.value.split('\n')[0],
+                                            other.value.split('\n')[0])
+            return True
+        elif self.value.split('\n')[0] == other.value.split('\n')[0]:
+            if self.options.get('verbose'):
+                print "EQUAL !%s! !%s!" % (self.value.split('\n')[0],
+                                           other.value.split('\n')[0])
+            return True
         else:
-            sLine1 = self.splitline(self.value)
-            sLine2 = self.splitline(other.value)
+            sLine1 = self.splitline(self.value.split('\n')[0])
+            sLine2 = self.splitline(other.value.split('\n')[0])
             if len(sLine1) != len(sLine2):
-                return 1
+                if self.options.get('verbose'):
+                    print "SPLITLEN !%s! !%s!" % (self.value.split('\n')[0], other.value.split('\n')[0])
+                return False
             for token1, token2 in izip(sLine1, sLine2):
+                if self.options.get('verbose'):
+                    print 'token1: ', token1, '; token2: ', token2
                 if self.options.get("ignore_space", False):
                     token1 = token1.strip()
                     token2 = token2.strip()
                 if token1 == token2:
                     continue
                 elif _FLOAT.match(token1) or _FLOAT.match(token2):
+                    if self.options.get('verbose'):
+                        print "FLOAT !%s! !%s!" % (self.value.split('\n')[0], other.value.split('\n')[0])
                     try:
                         if self.fequals(float(token1), float(token2)):
                             continue
                     except ValueError:
+                        if self.options.get('verbose'):
+                            print "ValueError !%s! !%s!" % (self.value.split('\n')[0], other.value.split('\n')[0])
+
                         pass
                 elif _INT.match(token1) or _INT.match(token2):
+                    if self.options.get('verbose'):
+                        print "INT !%s! !%s!" % (self.value.split('\n')[0], other.value.split('\n')[0])
                     if self.fequals(int(token1), int(token2)):
                         continue
 
-                return 1
-            return 0
+                if self.options.get('verbose'):
+                    print "TOKEN !%s! !%s!" % (self.value.split('\n')[0], other.value.split('\n')[0])
+                return False
+            if self.options.get('verbose'):
+                print "SAME !%s! !%s!" % (self.value.split('\n')[0], other.value.split('\n')[0])
+            return True
 
     def fequals(self, float1, float2):
         """Check for arguments beeing numerical equal.
 """
+        if self.options.get('verbose'):
+            print ("fequals: ", float1, float2,
+                   np.allclose(float1, float2, rtol=self.reps, atol=self.aeps),
+                   abs(float1 - float2), (self.aeps + self.reps * abs(float2)))
+
         return np.allclose(float1, float2,
                            rtol=self.reps, atol=self.aeps)
 
