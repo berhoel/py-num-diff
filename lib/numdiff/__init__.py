@@ -301,7 +301,7 @@ char when reading either file. Default: Do not ignore any line."""),
 numerial comparisons. Default: %default"""),
             make_option("-a", "--aeps",
                         type="float", default=1e-8, metavar="aEPS",
-                        help="""Relative error to be accepted in
+                        help="""Absolute error to be accepted in
 numerial comparisons. Default: %default"""),
             make_option("-C", "--context",
                         type="int", default="3", metavar="LINES",
@@ -336,11 +336,19 @@ Exclude files that match PAT."""),
                         action="store_true",
                         help="""\
 Compare MATLAB output, ignore the first lines."""),
+            make_option("--verbose",
+                        action="store_true",
+                        help="""\
+Generate verbose output."""),
             ]
 
         parser = OptionParser(usage=self.DOC, option_list=option_list)
 
         (self.options, self.args) = parser.parse_args()
+
+        if self.options.verbose:
+            print "options: aTol: %g; rTol: %g" % (
+                self.options.aeps, self.options.reps)
 
         if len(self.args) != 2:
             parser.error("incorrect number of arguments")

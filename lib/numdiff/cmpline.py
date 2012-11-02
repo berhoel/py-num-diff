@@ -83,7 +83,8 @@ numerical comparison.
     def fequals(self, float1, float2):
         """Check for arguments beeing numerical equal.
 """
-        return np.allclose(float1, float2, self.reps, self.aeps)
+        return np.allclose(float1, float2,
+                           rtol=self.reps, atol=self.aeps)
 
     def splitline(self, line):
         """Split line into tokens to be evaluated.
