@@ -14,10 +14,10 @@ SHELL = /bin/sh
 PY = $(shell ls ../lib/numdiff/*.py)
 
 TESTS = numdiff_doctest cmpline_doctest files_doctest		\
-	test_test dir_test split_test ignore_test		\
-	run1_test run2_test run3_test run4_test run5_test	\
-	call1_test call2_test call3_test call4_test		\
-	comma_test recur_test recur2_test mlab_test
+	test_test dir_test stest_ctest itest_ctest		\
+	first_atest second_atest third_atest run4_atest run5_atest	\
+	first_ctest second_ctest third_ctest fourth_ctest		\
+	comma_ctest recur_test recur2_test mlab_test reps_ctest
 
 PYPATH = PYTHONPATH=../lib
 PYTHON = $(PYPATH) python
@@ -35,52 +35,49 @@ build:
 install:	test
 	$(MAKE) -C .. $@
 
+mlab_test:	$(PY) ref/mlab_R2007b ref/mlab_R2012a
+	$(NUMDIFF) --matlab ref/mlab_R2007b ref/mlab_R2012a
+	touch $@
+
 %_test: %.py $(PY)
 	$(PYTHON) $<
 	touch $@
 
-run1_test:	$(PY) ref/first1.txt ref/first2.txt
-	$(PYTHON) ../app/numdiff ref/first1.txt ref/first2.txt --comment-char='#'
+first_aopt = --comment-char='\#'
+second_aopt = --reps=2e-3
+third_aopt = --reps=2e-3
+%_atest:	$(PY) ref/%1.txt ref/%2.txt
+	$(PYTHON) ../app/numdiff $($*_aopt) ref/$*1.txt ref/$*2.txt
 	touch $@
 
-run2_test:	$(PY) ref/second1.txt ref/second2.txt
-	$(PYTHON) ../app/numdiff ref/second1.txt ref/second2.txt --reps=2e-3
-	touch $@
-
-run3_test:	$(PY) ref/third1.txt ref/third2.txt
-	$(PYTHON) ../app/numdiff ref/third1.txt ref/third2.txt --reps=2e-3
-	touch $@
-
-run4_test:	$(PY) ref/third1.txt ref/third2.txt
+run4_atest:	$(PY) ref/third1.txt ref/third2.txt
 	$(PYTHON) ../app/numdiff ref/third1.txt ref/third2.txt --aeps=1e-11 ; [ $$? -eq 1 ]
 	touch $@
 
-run5_test:	$(PY) ref/mixed1.txt ref/mixed2.txt
+run5_atest:	$(PY) ref/mixed1.txt ref/mixed2.txt
 	$(PYTHON) ../app/numdiff -b ref/mixed1.txt ref/mixed2.txt
 	touch $@
 
-call1_test:	$(PY) ref/first1.txt ref/first2.txt
-	$(NUMDIFF) ref/first1.txt ref/first2.txt --comment-char='#'
+first_copt = --comment-char='\#'
+second_copt = --reps=2e-3
+third_copt = --reps=2e-5
+stest_copt = -s "\\|"
+itest_copt =  -I REV -s "\\|"
+%_ctest:	$(PY) ref/%1.txt ref/%2.txt
+	$(NUMDIFF) $($*_copt) ref/$*1.txt ref/$*2.txt
 	touch $@
 
-call2_test:	$(PY) ref/second1.txt ref/second2.txt
-	$(NUMDIFF) ref/second1.txt ref/second2.txt --reps=2e-3
+reps_ctest:	$(PY) ref/reps1.txt ref/reps2.txt
+	-$(NUMDIFF) -e .09 --context=0 ref/reps1.txt ref/reps2.txt | tee $@.txt
+	diff $@.txt ref
 	touch $@
 
-call3_test:	$(PY) ref/third1.txt ref/third2.txt
-	$(NUMDIFF) ref/third1.txt ref/third2.txt --reps=2e-5
-	touch $@
-
-call4_test:	$(PY) ref/third1.txt ref/third2.txt
+fourth_ctest:	$(PY) ref/third1.txt ref/third2.txt
 	$(NUMDIFF) ref/third1.txt ref/third2.txt --aeps=1e-11 ; [ $$? -eq 1 ]
 	touch $@
 
-comma_test:	$(PY) ref/comma1.txt ref/comma2.txt
-	$(NUMDIFF) ref/comma1.txt ref/comma2.txt
-	touch $@
-
 dir_test:	$(PY) ref/d1/data.txt ref/d2/data.txt
-	$(NUMDIFF) ref/d1/data.txt ref/d2
+	$(NUMDIFF) --verbose ref/d1/data.txt ref/d2
 	touch $@
 
 recur_test:	$(PY) ref/d1/data.txt ref/d2/data.txt
@@ -92,20 +89,8 @@ recur2_test:	$(PY) ref/d1/data.txt ref/d2/data.txt
 	diff -b $@.txt ref
 	touch $@
 
-split_test:	$(PY) ref/stest1.txt ref/stest2.txt
-	$(NUMDIFF) -s "\\|" ref/stest1.txt ref/stest2.txt
-	touch $@
-
-ignore_test:	$(PY) ref/stest1.txt ref/stest2.txt
-	$(NUMDIFF) -I REV -s "\\|" ref/itest1.txt ref/itest2.txt
-	touch $@
-
 numdiff_doctest:	$(PY)
 	$(PYTHON) -c "import numdiff ; numdiff._test()" -v
-	touch $@
-
-mlab_test:	$(PY) ref/mlab_R2007b ref/mlab_R2012a
-	$(NUMDIFF) --matlab ref/mlab_R2007b ref/mlab_R2012a
 	touch $@
 
 %_doctest:	%.py	$(PY)
