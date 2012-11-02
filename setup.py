@@ -23,7 +23,7 @@ from distutils.command import build_scripts
 build_scripts.first_line_re = re.compile(r'^###!.*python(\s+.*)?$')
 
 setup(name='numdiff',
-      version='1.1',
+      version='1.1+',
       description="Numerical diff, written in Python",
       keywords="diff numerical compare",
       author=u'Berthold Höllmann',
