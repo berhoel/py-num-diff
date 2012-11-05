@@ -22,14 +22,26 @@
 	  workingdir="${project.dir}">
       <arg value='clean'/>
       <environment>
-        <variable name="PATH" value="%PATH%;C:\cygwin\bin;c:\Python27"/>
+        <variable name="PATH">
+	  <path>
+	    <pathelement path='%PATH%'/>
+	    <pathelement dir='C:\cygwin\bin'/>
+	    <pathelement dir='c:\Python27'/>
+	  </path>
+	</variable>
       </environment>
     </exec>
     <exec program="make.exe" basedir="${cygwin.bin}"
 	  workingdir="${project.dir}\test">
       <arg value='clean'/>
       <environment>
-        <variable name="PATH" value="%PATH%;C:\cygwin\bin;c:\Python27"/>
+        <variable name="PATH">
+	  <path>
+	    <pathelement path='%PATH%'/>
+	    <pathelement dir='C:\cygwin\bin'/>
+	    <pathelement dir='c:\Python27'/>
+	  </path>
+	</variable>
       </environment>
     </exec>
   </target>
