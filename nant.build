@@ -34,7 +34,7 @@
     </exec>
   </target>
 
-  <target name="package" depends="dist">
+  <target name="dist">
     <echo message="creating installer for ${product.name}"/>
 
     <exec program="bash.exe" basedir="${cygwin.bin}"
