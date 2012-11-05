@@ -29,7 +29,10 @@ install:	test
 clean:
 	[ -n "$(IGN)" ] && rm -f $(IGN) || true
 
-.PHONY:	build	test
+dist:	build
+	python setup.py bdist_egg
+
+.PHONY:	build	test	dist
 
 # Local Variables:
 # compile-command:"make test"
