@@ -11,14 +11,18 @@
   <property name="cygwin.home" value="c:/cygwin"/>
   <property name="cygwin.bin" value="${cygwin.home}\bin"/>
 
-  <target name="all" depends="build,test,dist"/>
+  <target name="all" depends="init,build,test,dist"/>
+
+  <target name="init">
+   <call target="convertCygwinProjectPath"/>
+  </target>
 
   <target name="clean">
     <delete dir="${target.dir}"/>
     <exec program="bash.exe" basedir="${cygwin.bin}" commandline="--login -c 'make clean -C ${project.dir.cygwin}'"/>
   </target>
 
-  <target name="build" depends="clean">
+  <target name="build" depends="clean,init">
     <echo message="building ${product.name}"/>
 
    <exec program="bash.exe" basedir="${cygwin.bin}" commandline="--login -c 'make -C ${project.dir.cygwin}'" verbose="${verbosity}"/>
