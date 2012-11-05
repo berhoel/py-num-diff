@@ -18,7 +18,7 @@
     <exec program="bash.exe" basedir="${cygwin.bin}" commandline="--login -c 'make clean -C ${project.dir.cygwin}'"/>
   </target>
 
-  <target name="build" depends="init,clean">
+  <target name="build" depends="clean">
     <echo message="building ${product.name}"/>
 
    <exec program="bash.exe" basedir="${cygwin.bin}" commandline="--login -c 'make -C ${project.dir.cygwin}'" verbose="${verbosity}"/>
