@@ -31,7 +31,8 @@
 
   <target name="test" depends="build">
     <echo message="testing ${product.name}"/>
-    <exec program="bash.exe" basedir="${cygwin.bin}" commandline="--login -c 'make test -B ${project.dir.cygwin}'" verbose="${verbosity}">
+    <exec program="bash.exe" basedir="${cygwin.bin}"
+	  commandline="--login -c 'make test -C ${project.dir.cygwin}'" verbose="${verbosity}">
       <environment>
         <variable name="PATH" value="%PATH%;C:\Python24"/>
       </environment>
