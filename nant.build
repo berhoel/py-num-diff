@@ -24,9 +24,9 @@
       <environment>
         <variable name="PATH">
 	  <path>
-	    <pathelement path='%PATH%'/>
 	    <pathelement dir='C:\cygwin\bin'/>
 	    <pathelement dir='c:\Python27'/>
+	    <pathelement path='%PATH%'/>
 	  </path>
 	</variable>
       </environment>
@@ -37,9 +37,9 @@
       <environment>
         <variable name="PATH">
 	  <path>
-	    <pathelement path='%PATH%'/>
 	    <pathelement dir='C:\cygwin\bin'/>
 	    <pathelement dir='c:\Python27'/>
+	    <pathelement path='%PATH%'/>
 	  </path>
 	</variable>
       </environment>
@@ -55,9 +55,9 @@
       <environment>
         <variable name="PATH">
 	  <path>
-	    <pathelement path='%PATH%'/>
 	    <pathelement dir='C:\cygwin\bin'/>
 	    <pathelement dir='c:\Python27'/>
+	    <pathelement path='%PATH%'/>
 	  </path>
 	</variable>
       </environment>
@@ -72,10 +72,10 @@
       <environment>
         <variable name="PATH">
 	  <path>
-	    <pathelement path='%PATH%'/>
 	    <pathelement dir='C:\cygwin\bin'/>
 	    <pathelement dir='c:\Python27'/>
-	  </path>
+	    <pathelement path='%PATH%'/>
+°	  </path>
 	</variable>
       </environment>
     </exec>
