@@ -21,6 +21,9 @@
     <exec program="make.exe" basedir="${cygwin.bin}"
 	  workingdir="${project.dir}">
       <arg value='clean'/>
+      <environment>
+        <variable name="PATH" value="%PATH%;C:\cygwin\bin"/>
+      </environment>
     </exec>
     <exec program="make.exe" basedir="${cygwin.bin}"
 	  workingdir="${project.dir}\test">
