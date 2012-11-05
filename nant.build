@@ -34,7 +34,7 @@
     <exec program="bash.exe" basedir="${cygwin.bin}"
 	  commandline="--login -c 'make test -C ${project.dir.cygwin}'" verbose="${verbosity}">
       <environment>
-        <variable name="PATH" value="%PATH%;C:\Python24"/>
+        <variable name="PATH" value="%PATH%;C:\Python27"/>
       </environment>
     </exec>
   </target>
@@ -46,7 +46,7 @@
 	  commandline="--login -c 'make dist -C
 		       ${project.dir.cygwin}'" verbose="${verbosity}"> 
       <environment>
-        <variable name="PATH" value="%PATH%;C:\Python24"/>
+        <variable name="PATH" value="%PATH%;C:\Python27"/>
       </environment>
     </exec>
   <!-- TODO: call target for GLShipModel.iss, GLShipModel_Ext.iss, GLShipModel_GL.iss, GLShipModel_special.iss, PatranToBmf.iss -->
