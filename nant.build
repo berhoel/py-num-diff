@@ -6,50 +6,43 @@
 
   <property name="project.dir" value="${project::get-base-directory()}" dynamic="true"/>
   <property name="target.dir" value="${project.dir}/build"/>
-<property name="tools.dir" value="${project.dir}/tools"/>
+  <property name="tools.dir" value="${project.dir}/tools"/>
 
   <property name="cygwin.home" value="c:/cygwin"/>
   <property name="cygwin.bin" value="${cygwin.home}\bin"/>
 
-  <target name="all" depends="init,build,test,dist"/>
+  <target name="all" depends="init,build,test"/>
 
   <target name="init">
    <call target="convertCygwinProjectPath"/>
   </target>
 
   <target name="clean">
-    <delete dir="${target.dir}"/>
-    <exec program="bash.exe" basedir="${cygwin.bin}" commandline="--login -c 'make clean -C ${project.dir.cygwin}'"/>
+    <exec program="make.exe" basedir="${cygwin.bin}"
+	  workingdir="${project.dir}">
+      <arg value='clean'/>
+    </exec>
+    <exec program="make.exe" basedir="${cygwin.bin}"
+	  workingdir="${project.dir}\test">
+      <arg value='clean'/>
+    </exec>
   </target>
 
   <target name="build" depends="clean,init">
     <echo message="building ${product.name}"/>
-
-   <exec program="bash.exe" basedir="${cygwin.bin}" commandline="--login -c 'make -C ${project.dir.cygwin}'" verbose="${verbosity}"/>
-   <!-- TODO create artifacts in build dir -->
+    <exec program="make.exe" basedir="${cygwin.bin}"
+	  workingdir="${project.dir}">
+      <arg value='build'/>
+      <arg value='dist'/>
+    </exec>
   </target>
 
   <target name="test" depends="build">
     <echo message="testing ${product.name}"/>
-    <exec program="bash.exe" basedir="${cygwin.bin}"
-	  commandline="--login -c 'make test -C ${project.dir.cygwin}'" verbose="${verbosity}">
-      <environment>
-        <variable name="PATH" value="%PATH%;C:\Python27"/>
-      </environment>
+    <exec program="make.exe" basedir="${cygwin.bin}"
+	  verbose="${verbosity}" workingdir="${project.dir}\test">
+      <arg value="test"/>
     </exec>
-  </target>
-
-  <target name="dist">
-    <echo message="creating installer for ${product.name}"/>
-
-    <exec program="bash.exe" basedir="${cygwin.bin}"
-	  commandline="--login -c 'make dist -C
-		       ${project.dir.cygwin}'" verbose="${verbosity}"> 
-      <environment>
-        <variable name="PATH" value="%PATH%;C:\Python27"/>
-      </environment>
-    </exec>
-  <!-- TODO: call target for GLShipModel.iss, GLShipModel_Ext.iss, GLShipModel_GL.iss, GLShipModel_special.iss, PatranToBmf.iss -->
   </target>
 
   <target name="convertCygwinProjectPath">
