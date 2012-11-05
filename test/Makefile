@@ -21,9 +21,13 @@ TESTS = numdiff_doctest cmpline_doctest files_doctest		\
 
 PYPATH = PYTHONPATH=.
 PYTHON = $(PYPATH) python
-NUMDIFF=PATH=../app:$(PATH) $(PYPATH) numdiff
+NUMDIFF=PATH="../app:$(PATH)" $(PYPATH) numdiff
 
 IGN = $(shell [ -n "$$(svn propget svn:ignore .)" ] && echo "$$(svn propget svn:ignore .)")
+
+ifeq ("$(shell uname | cut --characters 1-6)","CYGWIN")
+TESTCLASS=WIN
+endif
 
 all:	build
 
@@ -86,7 +90,7 @@ recur_test:	$(PY) ref/d1/data.txt ref/d2/data.txt
 
 recur2_test:	$(PY) ref/d1/data.txt ref/d2/data.txt
 	-$(NUMDIFF) -r ref/1 ref/2 --exclude=.svn | tee $@.txt
-	diff -b $@.txt ref
+	diff -b $@.txt ref/$@.txt$(TESTCLASS)
 	touch $@
 
 numdiff_doctest:	$(PY)
