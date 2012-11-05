@@ -19,8 +19,17 @@ import re
 
 import numpy as np
 
+__all__ = ['CmpLine']
+
 _FLOAT = re.compile(r"\s*[-+]?(\d+(\.\d*)?|\d*\.\d+)([eE][-+]?\d+)?\s*")
 _INT = re.compile(r"\s*[-+]?\d+(?![.eE])\s*")
+
+
+def Count():
+    _val = 0
+    while True:
+        yield _val
+        _val += 1
 
 
 class CmpLine(object):
@@ -52,9 +61,9 @@ numerical comparison.
     def __eq__(self, other):
         if self.options.get('verbose'):
             print "__EQ__ !%s! !%s!" % (self.value.split('\n')[0],
-                                         other.value.split('\n')[0])
-        if (self.ignore is not None and self.ignore.search(self.value) and
-              self.ignore.search(other.value)):
+                                        other.value.split('\n')[0])
+        if self.ignore is not None and self.ignore.search(self.value) and \
+          self.ignore.search(other.value):
             if self.options.get('verbose'):
                 print "IGNORE !%s! !%s!" % (self.value.split('\n')[0],
                                             other.value.split('\n')[0])
@@ -69,7 +78,8 @@ numerical comparison.
             sLine2 = self.splitline(other.value.split('\n')[0])
             if len(sLine1) != len(sLine2):
                 if self.options.get('verbose'):
-                    print "SPLITLEN !%s! !%s!" % (self.value.split('\n')[0], other.value.split('\n')[0])
+                    print "SPLITLEN !%s! !%s!" % (
+                        self.value.split('\n')[0], other.value.split('\n')[0])
                 return False
             for token1, token2 in izip(sLine1, sLine2):
                 if self.options.get('verbose'):
@@ -81,26 +91,31 @@ numerical comparison.
                     continue
                 elif _FLOAT.match(token1) or _FLOAT.match(token2):
                     if self.options.get('verbose'):
-                        print "FLOAT !%s! !%s!" % (self.value.split('\n')[0], other.value.split('\n')[0])
+                        print "FLOAT !%s! !%s!" % (self.value.split('\n')[0],
+                                                   other.value.split('\n')[0])
                     try:
                         if self.fequals(float(token1), float(token2)):
                             continue
                     except ValueError:
                         if self.options.get('verbose'):
-                            print "ValueError !%s! !%s!" % (self.value.split('\n')[0], other.value.split('\n')[0])
-
+                            print "ValueError !%s! !%s!" % (
+                                self.value.split('\n')[0],
+                                other.value.split('\n')[0])
                         pass
                 elif _INT.match(token1) or _INT.match(token2):
                     if self.options.get('verbose'):
-                        print "INT !%s! !%s!" % (self.value.split('\n')[0], other.value.split('\n')[0])
+                        print "INT !%s! !%s!" % (self.value.split('\n')[0],
+                                                 other.value.split('\n')[0])
                     if self.fequals(int(token1), int(token2)):
                         continue
 
                 if self.options.get('verbose'):
-                    print "TOKEN !%s! !%s!" % (self.value.split('\n')[0], other.value.split('\n')[0])
+                    print "TOKEN !%s! !%s!" % (
+                        self.value.split('\n')[0], other.value.split('\n')[0])
                 return False
             if self.options.get('verbose'):
-                print "SAME !%s! !%s!" % (self.value.split('\n')[0], other.value.split('\n')[0])
+                print "SAME !%s! !%s!" % (
+                    self.value.split('\n')[0], other.value.split('\n')[0])
             return True
 
     def fequals(self, float1, float2):
@@ -132,7 +147,7 @@ numerical comparison.
         return self.value[item]
 
     def __hash__(self):
-        return hash(self.value)
+        return 1
 
 
 def _test():

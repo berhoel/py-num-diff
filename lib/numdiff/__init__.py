@@ -28,6 +28,8 @@ __date__ = u"$Date$"[5:-1]
 __version__ = "$Revision$"[10:-1]
 __docformat__ = "restructuredtext en"
 
+__all__ = ['Main']
+
 
 class NumDiffError(SystemExit):
     """Standard Error indicator for NumDiff

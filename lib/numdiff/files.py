@@ -16,6 +16,8 @@ __docformat__ = "restructuredtext en"
 
 import os.path
 
+__all__ = ['fileFactory', 'RegularFile', 'Directory']
+
 
 class NumDiffFileObject(object):
     """Base class for representing different file kinds.

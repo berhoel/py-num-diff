@@ -85,7 +85,7 @@ recur_test:	$(PY) ref/d1/data.txt ref/d2/data.txt
 	touch $@
 
 recur2_test:	$(PY) ref/d1/data.txt ref/d2/data.txt
-	-$(NUMDIFF) -r ref/1 ref/2 --exclude=.svn > $@.txt
+	-$(NUMDIFF) -r ref/1 ref/2 --exclude=.svn | tee $@.txt
 	diff -b $@.txt ref
 	touch $@
 
