@@ -27,7 +27,7 @@ install:	test
 	python setup.py install
 
 clean:
-	[ -n "$(IGN)" ] && rm -f $(IGN) || true
+	[ -n "$(IGN)" ] && $(RM) -r $(IGN) || true
 
 dist:	build
 	python setup.py bdist_egg
