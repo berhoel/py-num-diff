@@ -53,7 +53,13 @@
       <arg value='build'/>
       <arg value='dist'/>
       <environment>
-        <variable name="PATH" value="%PATH%;C:\cygwin\bin;c:\Python27"/>
+        <variable name="PATH">
+	  <path>
+	    <pathelement path='%PATH%'/>
+	    <pathelement dir='C:\cygwin\bin'/>
+	    <pathelement dir='c:\Python27'/>
+	  </path>
+	</variable>
       </environment>
     </exec>
   </target>
@@ -64,7 +70,13 @@
 	  verbose="${verbosity}" workingdir="${project.dir}\test">
       <arg value="test"/>
       <environment>
-        <variable name="PATH" value="%PATH%;C:\cygwin\bin;c:\Python27"/>
+        <variable name="PATH">
+	  <path>
+	    <pathelement path='%PATH%'/>
+	    <pathelement dir='C:\cygwin\bin'/>
+	    <pathelement dir='c:\Python27'/>
+	  </path>
+	</variable>
       </environment>
     </exec>
   </target>
