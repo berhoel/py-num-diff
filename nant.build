@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='utf-8'?>
+<project name="numdiff" default="all" basedir="." verbose="true">
+
+  <property name="product.name" value="numdiff"/>
+  <property name="verbosity" value="true"/>
+
+  <property name="project.dir" value="${project::get-base-directory()}" dynamic="true"/>
+  <property name="target.dir" value="${project.dir}/build"/>
+<property name="tools.dir" value="${project.dir}/tools"/>
+
+  <property name="cygwin.home" value="c:/cygwin"/>
+  <property name="cygwin.bin" value="${cygwin.home}\bin"/>
+
+  <target name="all" depends="build,test,dist"/>
+
+  <target name="clean">
+    <delete dir="${target.dir}"/>
+    <exec program="bash.exe" basedir="${cygwin.bin}" commandline="--login -c 'make clean -C ${project.dir.cygwin}'"/>
+  </target>
+
+  <target name="build" depends="init,clean">
+    <echo message="building ${product.name}"/>
+
+   <exec program="bash.exe" basedir="${cygwin.bin}" commandline="--login -c 'make -C ${project.dir.cygwin}'" verbose="${verbosity}"/>
+   <!-- TODO create artifacts in build dir -->
+  </target>
+
+  <target name="test" depends="build">
+    <echo message="testing ${product.name}"/>
+    <exec program="bash.exe" basedir="${cygwin.bin}" commandline="--login -c 'make test -B ${project.dir.cygwin}'" verbose="${verbosity}">
+      <environment>
+        <variable name="PATH" value="%PATH%;C:\Python24"/>
+      </environment>
+    </exec>
+  </target>
+
+  <target name="package" depends="dist">
+    <echo message="creating installer for ${product.name}"/>
+
+    <exec program="bash.exe" basedir="${cygwin.bin}"
+	  commandline="--login -c 'make dist -C
+		       ${project.dir.cygwin}'" verbose="${verbosity}"> 
+      <environment>
+        <variable name="PATH" value="%PATH%;C:\Python24"/>
+      </environment>
+    </exec>
+  <!-- TODO: call target for GLShipModel.iss, GLShipModel_Ext.iss, GLShipModel_GL.iss, GLShipModel_special.iss, PatranToBmf.iss -->
+  </target>
+
+  <target name="convertCygwinProjectPath">
+    <!-- workaround for ${cygpath::get-unix-path()} to convert ${project.dir} in CYGWIN syntax -->
+    <property name="temp.file" value="_name.tmp"/>
+    <exec program="cygpath.exe" basedir="${cygwin.bin}" commandline="-u ${project.dir}" output="${temp.file}"/>
+    <loadfile file="${temp.file}" property="project.dir.cygwin"/>
+    <property name="project.dir.cygwin" value="${string::trim(project.dir.cygwin)}"/>
+    <delete file="${temp.file}"/>
+  </target>
+</project>
