@@ -25,6 +25,9 @@
     <exec program="make.exe" basedir="${cygwin.bin}"
 	  workingdir="${project.dir}\test">
       <arg value='clean'/>
+      <environment>
+        <variable name="PATH" value="%PATH%;C:\cygwin\bin"/>
+      </environment>
     </exec>
   </target>
 
@@ -34,6 +37,9 @@
 	  workingdir="${project.dir}">
       <arg value='build'/>
       <arg value='dist'/>
+      <environment>
+        <variable name="PATH" value="%PATH%;C:\cygwin\bin"/>
+      </environment>
     </exec>
   </target>
 
@@ -42,6 +48,9 @@
     <exec program="make.exe" basedir="${cygwin.bin}"
 	  verbose="${verbosity}" workingdir="${project.dir}\test">
       <arg value="test"/>
+      <environment>
+        <variable name="PATH" value="%PATH%;C:\cygwin\bin"/>
+      </environment>
     </exec>
   </target>
 
