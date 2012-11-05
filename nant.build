@@ -22,14 +22,14 @@
 	  workingdir="${project.dir}">
       <arg value='clean'/>
       <environment>
-        <variable name="PATH" value="%PATH%;C:\cygwin\bin"/>
+        <variable name="PATH" value="%PATH%;C:\cygwin\bin;c:\Python27"/>
       </environment>
     </exec>
     <exec program="make.exe" basedir="${cygwin.bin}"
 	  workingdir="${project.dir}\test">
       <arg value='clean'/>
       <environment>
-        <variable name="PATH" value="%PATH%;C:\cygwin\bin"/>
+        <variable name="PATH" value="%PATH%;C:\cygwin\bin;c:\Python27"/>
       </environment>
     </exec>
   </target>
@@ -41,7 +41,7 @@
       <arg value='build'/>
       <arg value='dist'/>
       <environment>
-        <variable name="PATH" value="%PATH%;C:\cygwin\bin"/>
+        <variable name="PATH" value="%PATH%;C:\cygwin\bin;c:\Python27"/>
       </environment>
     </exec>
   </target>
@@ -52,7 +52,7 @@
 	  verbose="${verbosity}" workingdir="${project.dir}\test">
       <arg value="test"/>
       <environment>
-        <variable name="PATH" value="%PATH%;C:\cygwin\bin"/>
+        <variable name="PATH" value="%PATH%;C:\cygwin\bin;c:\Python27"/>
       </environment>
     </exec>
   </target>
