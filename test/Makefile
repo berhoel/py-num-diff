@@ -19,7 +19,7 @@ TESTS = numdiff_doctest cmpline_doctest files_doctest		\
 	first_ctest second_ctest third_ctest fourth_ctest		\
 	comma_ctest recur_test recur2_test mlab_test reps_ctest
 
-PYPATH = PYTHONPATH=../lib
+PYPATH = PYTHONPATH=.
 PYTHON = $(PYPATH) python
 NUMDIFF=PATH=../app:$(PATH) $(PYPATH) numdiff
 
@@ -102,6 +102,9 @@ clean:
 	[ -n "$(IGN)" ] && rm -f $(IGN) || true
 
 .PHONY:	build	install
+
+dist:
+	$(MAKE) -C .. $@
 
 vpath %.py ../lib/numdiff
 

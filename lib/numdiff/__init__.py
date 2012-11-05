@@ -141,12 +141,12 @@ tree for the base dir part `iDir`.
 >>> w = Main()
 >>> print w.shorttree(iDir='ref/1', *('ref/1', ['1', '.svn'], ['2', '3', '4']))
 ['1', '.svn', '2', '3', '4']
->>> print w.shorttree(iDir='ref/1', *('ref/1/1', ['.svn'], []))
+>>> print ['/'.join(os.path.split(i)) for i in w.shorttree(iDir='ref/1', *('ref/1/1', ['.svn'], []))]
 ['1/.svn']
->>> print w.shorttree(iDir='ref/1',
+>>> print ['/'.join(os.path.split(i)) for i in w.shorttree(iDir='ref/1',
 ...                   *('ref/1/1/.svn',
 ...                     ['text-base', 'prop-base', 'props', 'tmp'],
-...                     ['entries', 'all-wcprops']))
+...                     ['entries', 'all-wcprops']))]
 ['1/.svn/text-base', '1/.svn/prop-base', '1/.svn/props', '1/.svn/tmp', '1/.svn/entries', '1/.svn/all-wcprops']
 >>> w.exclude = re.compile(r'\.svn').match
 >>> print w.shorttree(iDir='ref/1', *('ref/1', ['1', '.svn'], ['2', '3', '4']))
