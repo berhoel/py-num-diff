@@ -17,8 +17,6 @@ __docformat__ = "restructuredtext en"
 from itertools import izip
 import re
 
-import numpy as np
-
 __all__ = ['CmpLine']
 
 _FLOAT = re.compile(r"\s*[-+]?(\d+(\.\d*)?|\d*\.\d+)([eE][-+]?\d+)?\s*")
@@ -123,11 +121,9 @@ numerical comparison.
 """
         if self.options.get('verbose'):
             print ("fequals: ", float1, float2,
-                   np.allclose(float1, float2, rtol=self.reps, atol=self.aeps),
                    abs(float1 - float2), (self.aeps + self.reps * abs(float2)))
 
-        return np.allclose(float1, float2,
-                           rtol=self.reps, atol=self.aeps)
+        return abs(float1 - float2) <= (self.aeps + self.reps * abs(float2))
 
     def splitline(self, line):
         """Split line into tokens to be evaluated.
