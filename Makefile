@@ -28,6 +28,7 @@ install:	test
 
 clean:
 	[ -n "$(IGN)" ] && $(RM) -r $(IGN) || true
+	$(MAKE) -C test clean
 
 dist:	build
 	python setup.py bdist_egg
