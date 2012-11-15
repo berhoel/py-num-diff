@@ -20,8 +20,11 @@ TESTS = numdiff_doctest cmpline_doctest files_doctest			\
 	first_ctest second_ctest third_ctest fourth_ctest		\
 	comma_ctest recur_test recur2_test mlab_test reps_ctest
 
-PYPATH = PYTHONPATH=.:../lib
+ifeq ("$(OS)","Windows_NT")
+PYPATH = PYTHONPATH=".;../lib"
+else
 PYTHON = $(PYPATH) python
+endif
 NUMDIFF=PATH="../app:$(PATH)" $(PYPATH) numdiff
 
 IGN = $(shell [ -n "$$(svn propget svn:ignore .)" ] && echo "$$(svn propget svn:ignore .)")
@@ -95,11 +98,11 @@ recur2_test:	$(PY) ref/d1/data.txt ref/d2/data.txt
 	touch $@
 
 numdiff_doctest:	$(PY)
-	$(PYTHON) -c "import numdiff ; numdiff._test()" -v
+	$(PYTHON) -c "import numdiff ; numdiff._test()"
 	touch $@
 
 %_doctest:	%.py	$(PY)
-	$(PYTHON) -c "from numdiff import $* ; $*._test()" -v
+	$(PYTHON) -c "from numdiff import $* ; $*._test()"
 	touch $@
 
 clean:
