@@ -10,3 +10,13 @@ comparing 'ref/1/3' and 'ref/2/3'
 - 123
 --- 0 ----
 comparing 'ref/1/4' and 'ref/2/4'
+comparing 'ref/1/5' and 'ref/2/5'
+Only in ref/1: 5.
+comparing 'ref/1/6' and 'ref/2/6'
+*** ref/1/6
+--- ref/2/6
+***************
+*** 1 ****
+! 456
+--- 1 ----
+! 789
