@@ -24,14 +24,12 @@ ifeq ("$(shell uname | cut --characters 1-6)","CYGWIN")
 TESTCLASS=WIN
 PYPATH = PYTHONPATH=".;../lib"
 else
-PYPATH = PYTHONPATH=".:../lib"
+PYPATH = PYTHONPATH=.:../lib
 endif
 PYTHON = $(PYPATH) python
 NUMDIFF=PATH="../app:$(PATH)" $(PYPATH) numdiff
 
 IGN = $(shell [ -n "$$(svn propget svn:ignore .)" ] && echo "$$(svn propget svn:ignore .)")
-
-endif
 
 all:	build
 
