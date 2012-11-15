@@ -84,22 +84,6 @@ ref/1/4 is a regular empty file
         return EmptyFile(path, base)
     return RegularFile(path, base)
 
-
-def _test():
-    """
-run doctests
-"""
-    import doctest
-    import importlib
-
-    nlist = __name__.split('.')
-    module = importlib.import_module(
-        '.%s' % nlist[-1], '.'.join(nlist[:-1]))
-
-    (failed, dummy) = doctest.testmod(module, verbose=True)
-    if failed != 0:
-        raise SystemExit(10)
-
 # Local Variables:
 # mode:python
 # mode:flyspell

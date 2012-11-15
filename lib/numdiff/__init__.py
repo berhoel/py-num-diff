@@ -144,6 +144,7 @@ Compare two text files with taking into account numerical errors.
                                      os.path.split(self.args[0])[-1])
             else:
                 file2 = self.args[1]
+            print "comparing '%s' and '%s'" % (file1, file2)
             result = self.docheck(file1, file2)
         if result:
             return 1
@@ -166,24 +167,30 @@ Compare two text files with taking into account numerical errors.
             lines1[:6] = [''] * 6
             lines2[:6] = [''] * 6
 
-        my_answer = DiffList()
+        my_answer = DiffList(maxchunk=10)
+        if self.options.verbose:
+            print "difflib.SequenceMatcher(None, lines1, lines2).get_opcodes()"
+            print difflib.SequenceMatcher(None, lines1, lines2).get_opcodes()
         for (tag, ai, aj, bi, bj) in difflib.SequenceMatcher(
                 None, lines1, lines2).get_opcodes():
             if tag in ('delete', 'insert', 'equal'):
                 my_answer.append((tag, ai, aj, bi, bj))
             else:
-                a = [CmpLine(i, self.optdict) for i in lines1[ai:aj]]
-                b = [CmpLine(i, self.optdict) for i in lines2[bi:bj]]
-                my_answer.extend(
-                    [(i[0], i[1] + ai, i[2] + ai, i[3] + bi, i[4] + bi)
-                     for i in difflib.SequenceMatcher(
-                             None, a, b).get_opcodes()])
+                for (TAG, AI, AJ, BI, BJ) in DiffList.prepres(tag, ai, aj, bi, bj, 20):
+                    a = [CmpLine(i, self.optdict) for i in lines1[AI:AJ]]
+                    b = [CmpLine(i, self.optdict) for i in lines2[BI:BJ]]
+                    my_answer.extend(
+                        [(i[0], i[1] + AI, i[2] + AI, i[3] + BI, i[4] + BI)
+                         for i in difflib.SequenceMatcher(
+                                 None, a, b).get_opcodes()])
 
         if self.options.verbose:
             print "lines1:"
             print ['%s' % i for i in lines1]
             print "lines2:"
             print ['%s' % i for i in lines2]
+            print "my_answer"
+            print my_answer
         res = '\n'.join(
             context_diff(
                 my_answer,
@@ -339,6 +346,8 @@ Only in dir1: entry1.
         failed = False
         composite = self.dirtreecomp(dir1, dir2)
         for i, j in composite:
+            print "comparing '%s' and '%s'" % (
+                os.path.join(dir1, i), os.path.join(dir2, j))
             if j is None:
                 self.onlyIn(dir1, i)
                 failed = True
@@ -434,23 +443,6 @@ Generate verbose output."""),
         if self.options.ignore_matching_lines:
             self.ignore_matching_lines = re.compile('|'.join(
                 self.options.ignore_matching_lines)).search
-
-
-def _test():
-    """
-run doctests
-"""
-    import doctest
-
-    import numdiff
-
-    (failed, dummy) = doctest.testmod(numdiff, verbose=True)
-    if failed != 0:
-        raise SystemExit(10)
-
-if __name__ == "__main__":
-    MAIN = Main()
-    raise SystemExit(MAIN())
 
 # Local Variables:
 # mode:python

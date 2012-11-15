@@ -18,12 +18,13 @@ __date__ = "$Date$"
 __version__ = "$Revision$"[10:-1]
 __package_info__ = """ """
 
+import doctest
 import unittest
 import cStringIO
 from itertools import izip
 
 import numdiff
-
+from numdiff import cmpline, difflist, files
 
 class testCfile(unittest.TestCase):
     """Test method for class CFile.
@@ -48,6 +49,18 @@ got it?
             self.assertEqual(line1, line2)
 
 if __name__ == '__main__':
+
+    doctest.set_unittest_reportflags(doctest.REPORT_CDIFF)
+    SUITE = unittest.TestSuite()
+
+    for mod in (numdiff, cmpline, difflist, files):
+        SUITE.addTest(doctest.DocTestSuite(mod))
+
+    RUNNER = unittest.TextTestRunner()
+    RUNRES = RUNNER.run(SUITE)
+    if RUNRES.errors or RUNRES.failures:
+        raise Exception("failed test occured")
+
     unittest.main()
 
 # Local Variables:

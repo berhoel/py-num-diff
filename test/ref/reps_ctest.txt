@@ -1,3 +1,4 @@
+comparing 'ref/reps1.txt' and 'ref/reps2.txt'
 *** ref/reps1.txt
 --- ref/reps2.txt
 ***************
