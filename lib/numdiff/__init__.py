@@ -22,6 +22,7 @@ from optparse import OptionParser, make_option
 
 from .files import fileFactory, RegularFile, Directory
 from .cmpline import CmpLine
+from .difflist import DiffList
 
 #  CVSID: $Id$
 __date__ = u"$Date$"[5:-1]
@@ -35,6 +36,50 @@ class NumDiffError(SystemExit):
     """Standard Error indicator for NumDiff
 """
     pass
+
+
+# See http://www.unix.org/single_unix_specification/
+def context_diff(sequence, a, b, fromfile='', tofile='',
+                 fromfiledate='', tofiledate='', n=3, lineterm='\n'):
+    r"""
+Modified context_diff taken from stamdard Python difflib.
+
+This version takes
+"""
+    from difflib import _format_range_context, SequenceMatcher
+
+    prefix = dict(insert='+ ', delete='- ', replace='! ', equal='  ')
+    started = False
+    seq = SequenceMatcher(None,[],[])
+    seq.opcodes = sequence
+    for group in seq.get_grouped_opcodes(n):
+        if not started:
+            started = True
+            fromdate = '\t{}'.format(fromfiledate) if fromfiledate else ''
+            todate = '\t{}'.format(tofiledate) if tofiledate else ''
+            yield '*** {}{}{}'.format(fromfile, fromdate, lineterm)
+            yield '--- {}{}{}'.format(tofile, todate, lineterm)
+
+        first, last = group[0], group[-1]
+        yield '***************' + lineterm
+
+        file1_range = _format_range_context(first[1], last[2])
+        yield '*** {} ****{}'.format(file1_range, lineterm)
+
+        if any(tag in ('replace', 'delete') for tag, _, _, _, _ in group):
+            for tag, i1, i2, _, _ in group:
+                if tag != 'insert':
+                    for line in a[i1:i2]:
+                        yield prefix[tag] + line
+
+        file2_range = _format_range_context(first[3], last[4])
+        yield '--- {} ----{}'.format(file2_range, lineterm)
+
+        if any(tag in ('replace', 'insert') for tag, _, _, _, _ in group):
+            for tag, _, _, j1, j2 in group:
+                if tag != 'delete':
+                    for line in b[j1:j2]:
+                        yield prefix[tag] + line
 
 
 class CFile(object):
@@ -108,23 +153,36 @@ Compare two text files with taking into account numerical errors.
     def docheck(self, file1, file2):
         """Initiate comparing of two files.
 """
-        lines1 = [CmpLine(i.split('\n')[0], self.optdict)
+        lines1 = [i.split('\n')[0]
                   for i in CFile(open(file1, 'r'), self.iscomment,
                                  self.options.ignore_space_change or
                                  self.options.matlab)]
-        lines2 = [CmpLine(i.split('\n')[0], self.optdict)
+        lines2 = [i.split('\n')[0]
                   for i in CFile(open(file2, 'r'), self.iscomment,
                                  self.options.ignore_space_change or
                                  self.options.matlab)]
+
         if self.optdict['mlab']:
-            lines1[:6] = [CmpLine('', self.optdict)] * 6
-            lines2[:6] = [CmpLine('', self.optdict)] * 6
+            lines1[:6] = [''] * 6
+            lines2[:6] = [''] * 6
+
+        my_answer = DiffList()
+        for (tag, ai, aj, bi, bj) in difflib.SequenceMatcher(None, lines1, lines2).get_opcodes():
+            if tag in ('delete', 'insert', 'equal'):
+                my_answer.append((tag, ai, aj, bi, bj))
+            else:
+                a = [CmpLine(i, self.optdict) for i in lines1[ai:aj]]
+                b = [CmpLine(i, self.optdict) for i in lines2[bi:bj]]
+                my_answer.extend(
+                    [(i[0], i[1] + ai, i[2] + ai, i[3] + bi, i[4] + bi)
+                     for i in difflib.SequenceMatcher(None, a, b).get_opcodes()])
+
         if self.options.verbose:
             print "lines1:"
             print ['%s' % i for i in lines1]
             print "lines2:"
             print ['%s' % i for i in lines2]
-        res = '\n'.join(difflib.context_diff(
+        res = '\n'.join(context_diff(my_answer,
             lines1, lines2, fromfile=file1, tofile=file2,
             n=self.options.context, lineterm=''))
         if bool(res):
@@ -350,7 +408,7 @@ Compare MATLAB output, ignore the first lines."""),
                         action="store_true",
                         help="""\
 Generate verbose output."""),
-                        ]
+    ]
 
         parser = OptionParser(usage=self.DOC, option_list=option_list)
 
@@ -378,9 +436,9 @@ run doctests
 """
     import doctest
 
-    module = __import__(__name__)
+    import numdiff
 
-    (failed, dummy) = doctest.testmod(module, verbose=True)
+    (failed, dummy) = doctest.testmod(numdiff, verbose=True)
     if failed != 0:
         raise SystemExit(10)
 
@@ -391,5 +449,6 @@ if __name__ == "__main__":
 # Local Variables:
 # mode:python
 # mode:flyspell
+# ispell-local-dictionary:"en"
 # compile-command:"make -C ../../test test"
 # End:

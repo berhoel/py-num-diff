@@ -23,18 +23,19 @@ _FLOAT = re.compile(r"\s*[-+]?(\d+(\.\d*)?|\d*\.\d+)([eE][-+]?\d+)?\s*")
 _INT = re.compile(r"\s*[-+]?\d+(?![.eE])\s*")
 
 
-def Count():
-    _val = 0
-    while True:
-        yield _val
-        _val += 1
-
-
 class CmpLine(object):
     """Representing test lines to be compared.
 
 Tries literal comparison of lines first. If this fails, tries
 numerical comparison.
+
+>>> a = CmpLine("AA 1.00000000001")
+>>> b = CmpLine("AA 1")
+>>> c = CmpLine("BB")
+>>> a == c
+False
+>>> a == b
+True
 """
 
     linesplit = re.compile(r' *, *| +')
@@ -151,8 +152,11 @@ def _test():
 run doctests
 """
     import doctest
+    import importlib
 
-    module = __import__(__name__)
+    nlist = __name__.split('.')
+    module = importlib.import_module(
+        '.%s' % nlist[-1], '.'.join(nlist[:-1]))
 
     (failed, dummy) = doctest.testmod(module, verbose=True)
     if failed != 0:
@@ -161,5 +165,6 @@ run doctests
 # Local Variables:
 # mode:python
 # mode:flyspell
+# ispell-local-dictionary:"en"
 # compile-command:"make -C ../../test test"
 # End:

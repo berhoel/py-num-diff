@@ -13,13 +13,14 @@ SHELL = /bin/sh
 
 PY = $(shell ls ../lib/numdiff/*.py)
 
-TESTS = numdiff_doctest cmpline_doctest files_doctest		\
-	test_test dir_test stest_ctest itest_ctest		\
+TESTS = numdiff_doctest cmpline_doctest files_doctest			\
+	difflist_doctest						\
+	test_test dir_test stest_ctest itest_ctest			\
 	first_atest second_atest third_atest run4_atest run5_atest	\
 	first_ctest second_ctest third_ctest fourth_ctest		\
 	comma_ctest recur_test recur2_test mlab_test reps_ctest
 
-PYPATH = PYTHONPATH=.
+PYPATH = PYTHONPATH=.:../lib
 PYTHON = $(PYPATH) python
 NUMDIFF=PATH="../app:$(PATH)" $(PYPATH) numdiff
 

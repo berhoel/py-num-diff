@@ -73,8 +73,8 @@ different subclasses of `NumDiffFileObject`.
 Makefile is a regular file
 >>> print '%s' % fileFactory('.', '')
 . is a directory
->>> print '%s' % fileFactory('call1_test', '')
-call1_test is a regular empty file
+>>> print '%s' % fileFactory('4', 'ref/1/')
+ref/1/4 is a regular empty file
 """
     fname = os.path.join(base, path)
     statinfo = os.stat(fname)
@@ -90,8 +90,11 @@ def _test():
 run doctests
 """
     import doctest
+    import importlib
 
-    module = __import__(__name__)
+    nlist = __name__.split('.')
+    module = importlib.import_module(
+        '.%s' % nlist[-1], '.'.join(nlist[:-1]))
 
     (failed, dummy) = doctest.testmod(module, verbose=True)
     if failed != 0:
@@ -100,5 +103,6 @@ run doctests
 # Local Variables:
 # mode:python
 # mode:flyspell
+# ispell-local-dictionary:"en"
 # compile-command:"make -C ../../test test"
 # End:
