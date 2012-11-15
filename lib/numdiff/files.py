@@ -36,8 +36,8 @@ class NumDiffFileObject(object):
 class RegularFile(NumDiffFileObject):
     """
 >>> a = RegularFile('2', '1')
->>> print '%s' % a
-1/2 is a regular file
+>>> ('%s' % a) == ('%s is a regular file' % os.path.join('1', '2'))
+True
 """
     def __str__(self):
         return "%s is a regular file" % os.path.join(self.base, self.path)
@@ -46,8 +46,8 @@ class RegularFile(NumDiffFileObject):
 class EmptyFile(RegularFile):
     """
 >>> a = EmptyFile('2', '1')
->>> print '%s' % a
-1/2 is a regular empty file
+>>> ('%s' % a) == ('%s is a regular empty file' % os.path.join('1', '2'))
+True
 """
     def __str__(self):
         return "%s is a regular empty file" % os.path.join(
@@ -57,8 +57,8 @@ class EmptyFile(RegularFile):
 class Directory(NumDiffFileObject):
     """
 >>> a = Directory('2', '1')
->>> print '%s' % a
-1/2 is a directory
+>>> ('%s' % a) == ('%s is a directory' % os.path.join('1', '2'))
+True
 """
     def __str__(self):
         return "%s is a directory" % os.path.join(self.base, self.path)

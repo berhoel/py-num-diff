@@ -29,9 +29,7 @@ class CmpLine(object):
 Tries literal comparison of lines first. If this fails, tries
 numerical comparison.
 
->>> a = CmpLine("AA 1.00000000001")
->>> b = CmpLine("AA 1")
->>> c = CmpLine("BB")
+>>> a, b, c = CmpLine("AA 1.00000000001"), CmpLine("AA 1"), CmpLine("BB")
 >>> a == c
 False
 >>> a == b
