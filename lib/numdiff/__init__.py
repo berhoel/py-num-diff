@@ -346,11 +346,8 @@ Only in dir1: entry1.
         failed = False
         composite = self.dirtreecomp(dir1, dir2)
         for i, j in composite:
-            if dir1 and dir2:
-                print "comparing '%s' and '%s'" % (
-                    os.path.join(dir1, i), os.path.join(dir2, j))
-            else:
-                print "comparing '%s' and '%s'" % (i, j)
+            print "comparing '%s' and '%s'" % (
+                os.path.join(dir1, i), os.path.join(dir2, j if j else i))
             if j is None:
                 self.onlyIn(dir1, i)
                 failed = True
