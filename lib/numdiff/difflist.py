@@ -15,6 +15,7 @@ __date__ = u"$Date$"[6:-1]
 __version__ = "$Revision$"[10:-1]
 __docformat__ = "restructuredtext en"
 
+
 class DiffList(object):
     """
 >>> a = DiffList(('equal', 1, 3, 1, 3))
@@ -55,6 +56,7 @@ class DiffList(object):
 
     def __len__(self):
         return len(self.vals)
+
 
 def _test():
     """

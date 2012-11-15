@@ -50,7 +50,7 @@ This version takes
 
     prefix = dict(insert='+ ', delete='- ', replace='! ', equal='  ')
     started = False
-    seq = SequenceMatcher(None,[],[])
+    seq = SequenceMatcher(None, [], [])
     seq.opcodes = sequence
     for group in seq.get_grouped_opcodes(n):
         if not started:
@@ -167,7 +167,8 @@ Compare two text files with taking into account numerical errors.
             lines2[:6] = [''] * 6
 
         my_answer = DiffList()
-        for (tag, ai, aj, bi, bj) in difflib.SequenceMatcher(None, lines1, lines2).get_opcodes():
+        for (tag, ai, aj, bi, bj) in difflib.SequenceMatcher(
+                None, lines1, lines2).get_opcodes():
             if tag in ('delete', 'insert', 'equal'):
                 my_answer.append((tag, ai, aj, bi, bj))
             else:
@@ -175,16 +176,19 @@ Compare two text files with taking into account numerical errors.
                 b = [CmpLine(i, self.optdict) for i in lines2[bi:bj]]
                 my_answer.extend(
                     [(i[0], i[1] + ai, i[2] + ai, i[3] + bi, i[4] + bi)
-                     for i in difflib.SequenceMatcher(None, a, b).get_opcodes()])
+                     for i in difflib.SequenceMatcher(
+                             None, a, b).get_opcodes()])
 
         if self.options.verbose:
             print "lines1:"
             print ['%s' % i for i in lines1]
             print "lines2:"
             print ['%s' % i for i in lines2]
-        res = '\n'.join(context_diff(my_answer,
-            lines1, lines2, fromfile=file1, tofile=file2,
-            n=self.options.context, lineterm=''))
+        res = '\n'.join(
+            context_diff(
+                my_answer,
+                lines1, lines2, fromfile=file1, tofile=file2,
+                n=self.options.context, lineterm=''))
         if bool(res):
             if self.options.brief:
                 print "Files %s and %s differ" % (file1, file2)
@@ -199,7 +203,8 @@ tree for the base dir part `iDir`.
 >>> w = Main()
 >>> print w.shorttree(iDir='ref/1', *('ref/1', ['1', '.svn'], ['2', '3', '4']))
 ['1', '.svn', '2', '3', '4']
->>> print ['/'.join(os.path.split(i)) for i in w.shorttree(iDir='ref/1', *('ref/1/1', ['.svn'], []))]
+>>> print ['/'.join(os.path.split(i)) for i in w.shorttree(iDir='ref/1',
+...        *('ref/1/1', ['.svn'], []))]
 ['1/.svn']
 >>> print ['/'.join(os.path.split(i)) for i in w.shorttree(iDir='ref/1',
 ...                   *('ref/1/1/.svn',
@@ -207,7 +212,8 @@ tree for the base dir part `iDir`.
 ...                     ['entries', 'all-wcprops']))]
 ['1/.svn/text-base', '1/.svn/prop-base', '1/.svn/props', '1/.svn/tmp', '1/.svn/entries', '1/.svn/all-wcprops']
 >>> w.exclude = re.compile(r'\.svn').match
->>> print w.shorttree(iDir='ref/1', *('ref/1', ['1', '.svn'], ['2', '3', '4']))
+>>> print w.shorttree(iDir='ref/1', *('ref/1', ['1', '.svn'],
+...      ['2', '3', '4']))
 ['1', '2', '3', '4']
 >>> print w.shorttree(iDir='ref/1', *('ref/1/1', ['.svn'], []))
 []
