@@ -20,17 +20,17 @@ TESTS = numdiff_doctest cmpline_doctest files_doctest			\
 	first_ctest second_ctest third_ctest fourth_ctest		\
 	comma_ctest recur_test recur2_test mlab_test reps_ctest
 
-ifeq ("$(OS)","Windows_NT")
+ifeq ("$(shell uname | cut --characters 1-6)","CYGWIN")
+TESTCLASS=WIN
 PYPATH = PYTHONPATH=".;../lib"
 else
-PYTHON = $(PYPATH) python
+PYPATH = PYTHONPATH=".:../lib"
 endif
+PYTHON = $(PYPATH) python
 NUMDIFF=PATH="../app:$(PATH)" $(PYPATH) numdiff
 
 IGN = $(shell [ -n "$$(svn propget svn:ignore .)" ] && echo "$$(svn propget svn:ignore .)")
 
-ifeq ("$(shell uname | cut --characters 1-6)","CYGWIN")
-TESTCLASS=WIN
 endif
 
 all:	build
