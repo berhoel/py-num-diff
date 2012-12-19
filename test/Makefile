@@ -13,12 +13,26 @@ SHELL = /bin/sh
 
 PY = $(shell ls ../lib/numdiff/*.py)
 
-TESTS = numdiff_doctest cmpline_doctest files_doctest			\
-	difflist_doctest						
-TESTS = test_test dir_test stest_ctest itest_ctest			\
-	first_atest second_atest third_atest run4_atest run5_atest	\
-	first_ctest second_ctest third_ctest fourth_ctest		\
-	comma_ctest recur_test recur2_test mlab_test reps_ctest
+TESTS =
+TESTS += test_test
+TESTS += dir_test
+TESTS += stest_ctest
+TESTS += itest_ctest
+TESTS += first_atest
+TESTS += NASTRAN_atest
+TESTS += second_atest
+TESTS += third_atest
+TESTS += run4_atest
+TESTS += run5_atest
+TESTS += first_ctest
+TESTS += second_ctest
+TESTS += third_ctest
+TESTS += fourth_ctest
+TESTS += comma_ctest
+TESTS += recur_test
+TESTS += recur2_test
+TESTS += mlab_test
+TESTS += reps_ctest
 
 ifeq ("$(shell uname | cut --characters 1-6)","CYGWIN")
 TESTCLASS=WIN
@@ -52,6 +66,7 @@ mlab_test:	$(PY) ref/mlab_R2007b ref/mlab_R2012a
 first_aopt = --comment-char='\#'
 second_aopt = --reps=2e-3
 third_aopt = --reps=2e-3
+NASTRAN_aopt = --comment-char='$$' --fixcols=8,24,40,56,72,80
 %_atest:	$(PY) ref/%1.txt ref/%2.txt
 	$(PYTHON) ../app/numdiff $($*_aopt) ref/$*1.txt ref/$*2.txt
 	touch $@
@@ -93,14 +108,6 @@ recur_test:	$(PY) ref/d1/data.txt ref/d2/data.txt
 recur2_test:	$(PY) ref/d1/data.txt ref/d2/data.txt
 	-$(NUMDIFF) -r ref/1 ref/2 --exclude=.svn | tee $@.txt
 	diff -b $@.txt ref/$@.txt$(TESTCLASS)
-	touch $@
-
-numdiff_doctest:	$(PY)
-	$(PYTHON) -c "import numdiff ; numdiff._test()"
-	touch $@
-
-%_doctest:	%.py	$(PY)
-	$(PYTHON) -c "from numdiff import $* ; $*._test()"
 	touch $@
 
 clean:

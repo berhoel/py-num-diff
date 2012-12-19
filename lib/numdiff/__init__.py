@@ -18,7 +18,7 @@ import os
 import os.path
 import re
 from itertools import izip
-from optparse import OptionParser, make_option
+from argparse import ArgumentParser
 
 from .files import fileFactory, RegularFile, Directory
 from .cmpline import CmpLine
@@ -86,7 +86,7 @@ class CFile(object):
     """Class for providing file information with ability to ignore
 comment lines.
 """
-    ws = re.compile("\s+")
+    ws = re.compile(r"\s+")
 
     def __init__(self, fileObj, iscomment, ignore_space=False):
         self.fileObj = fileObj
@@ -109,8 +109,6 @@ class Main():
     """Main program. Used when called on command line.
 """
     DOC = """\
-usage: %prog [OPTIONS] FILE1 FILE2
-
 Compare two text files with taking into account numerical errors.
 """
 
@@ -125,25 +123,26 @@ Compare two text files with taking into account numerical errors.
     def __call__(self):
         self.parse_cmdline()
         self.optdict.update(
-            dict(cchars=self.options.comment_char,
-                 aeps=self.options.aeps,
-                 reps=self.options.reps,
-                 ignore_space=self.options.ignore_space_change,
-                 splitre=self.options.splitre,
-                 brief=self.options.brief,
-                 mlab=self.options.matlab,
-                 verbose=self.options.verbose))
-        if self.options.matlab:
+            dict(cchars=self.args.comment_char,
+                 aeps=self.args.aeps,
+                 reps=self.args.reps,
+                 ignore_space=self.args.ignore_space_change,
+                 splitre=self.args.splitre,
+                 brief=self.args.brief,
+                 mlab=self.args.matlab,
+                 verbose=self.args.verbose,
+                 fixcols=self.args.fixcols))
+        if self.args.matlab:
             self.optdict['ignore_space'] = True
-        if self.options.recursive:
-            result = self.deepcheck(*self.args)
+        if self.args.recursive:
+            result = self.deepcheck(self.args.from_file, self.args.to_file)
         else:
-            file1 = self.args[0]
-            if os.path.isdir(self.args[1]):
-                file2 = os.path.join(self.args[1],
-                                     os.path.split(self.args[0])[-1])
+            file1 = self.args.from_file
+            if os.path.isdir(self.args.to_file):
+                file2 = os.path.join(self.args.to_file,
+                                     os.path.split(self.args.from_file)[-1])
             else:
-                file2 = self.args[1]
+                file2 = self.args.to_file
             print "comparing '%s' and '%s'" % (file1, file2)
             result = self.docheck(file1, file2)
         if result:
@@ -156,19 +155,19 @@ Compare two text files with taking into account numerical errors.
 """
         lines1 = [i.split('\n')[0]
                   for i in CFile(open(file1, 'r'), self.iscomment,
-                                 self.options.ignore_space_change or
-                                 self.options.matlab)]
+                                 self.args.ignore_space_change or
+                                 self.args.matlab)]
         lines2 = [i.split('\n')[0]
                   for i in CFile(open(file2, 'r'), self.iscomment,
-                                 self.options.ignore_space_change or
-                                 self.options.matlab)]
+                                 self.args.ignore_space_change or
+                                 self.args.matlab)]
 
         if self.optdict['mlab']:
             lines1[:6] = [''] * 6
             lines2[:6] = [''] * 6
 
         my_answer = DiffList(maxchunk=10)
-        if self.options.verbose:
+        if self.args.verbose:
             print "difflib.SequenceMatcher(None, lines1, lines2).get_opcodes()"
             print difflib.SequenceMatcher(None, lines1, lines2).get_opcodes()
         for (tag, ai, aj, bi, bj) in difflib.SequenceMatcher(
@@ -176,7 +175,8 @@ Compare two text files with taking into account numerical errors.
             if tag in ('delete', 'insert', 'equal'):
                 my_answer.append((tag, ai, aj, bi, bj))
             else:
-                for (TAG, AI, AJ, BI, BJ) in DiffList.prepres(tag, ai, aj, bi, bj, 20):
+                for (_, AI, AJ, BI, BJ) in DiffList.prepres(
+                        tag, ai, aj, bi, bj, 20):
                     a = [CmpLine(i, self.optdict) for i in lines1[AI:AJ]]
                     b = [CmpLine(i, self.optdict) for i in lines2[BI:BJ]]
                     my_answer.extend(
@@ -184,7 +184,7 @@ Compare two text files with taking into account numerical errors.
                          for i in difflib.SequenceMatcher(
                                  None, a, b).get_opcodes()])
 
-        if self.options.verbose:
+        if self.args.verbose:
             print "lines1:"
             print ['%s' % i for i in lines1]
             print "lines2:"
@@ -195,16 +195,16 @@ Compare two text files with taking into account numerical errors.
             context_diff(
                 my_answer,
                 lines1, lines2, fromfile=file1, tofile=file2,
-                n=self.options.context, lineterm=''))
+                n=self.args.context, lineterm=''))
         if bool(res):
-            if self.options.brief:
+            if self.args.brief:
                 print "Files %s and %s differ" % (file1, file2)
             else:
                 print res
         return bool(res)
 
     def shorttree(self, base, dirs, fnames, iDir):
-        """Shorten list `tree` with entries from parsing a directory
+        r"""Shorten list `tree` with entries from parsing a directory
 tree for the base dir part `iDir`.
 
 >>> w = Main()
@@ -367,82 +367,90 @@ Only in dir1: entry1.
                 failed = self.docheck(obj1.name, obj2.name) or failed
         return failed
 
+    @staticmethod
+    def columns(inp):
+        """
+>>> Main.columns('8,24,40,56,72,80')
+[8, 24, 40, 56, 72, 80]
+"""
+        return [int(i) for i in inp.split(',')]
+
     def parse_cmdline(self):
         """
 Parse command line.
 """
-        option_list = [
-            make_option("-c", "--comment-char",
-                        action="store", type="string",
-                        default=None,
-                        metavar="<comment char>",
-                        help="""Ignore lines starting with the comment
-char when reading either file. Default: Do not ignore any line."""),
-            make_option("-e", "--reps",
-                        type="float", default=1e-5, metavar="rEPS",
-                        help="""Relative error to be accepted in
-numerial comparisons. Default: %default"""),
-            make_option("-a", "--aeps",
-                        type="float", default=1e-8, metavar="aEPS",
-                        help="""Absolute error to be accepted in
-numerial comparisons. Default: %default"""),
-            make_option("-C", "--context",
-                        type="int", default="3", metavar="LINES",
-                        help="""\
-Output NUM (default %default) lines of copied context."""),
-#             make_option("-U", "--unified",
-#                         type="int", default="3", metavar="LINES",
-#                         help="""\
-# Output NUM (default %default) lines of unified context."""),
-            make_option("-b", "--ignore-space-change",
-                        action="store_true",
-                        help="""Ignore changes in the amount of
-white space."""),
-            make_option("-s", "--splitre",
-                        type="str", default=None,
-                        help="""python regular expression used to split
-lines before checking for numerical changes"""),
-            make_option("-r", "--recursive",
-                        default=False, action="store_true",
-                        help="""Recursively compare any subdirectories
-found."""),
-            make_option("-x", "--exclude", metavar='PAT', default=[],
-                        action='append', help="""\
-Exclude files that match PAT."""),
-            make_option("-I", "--ignore-matching-lines", metavar="RE",
-                        type="str", default=[], action='append',
-                        help="""Ignore changes whose lines all match RE."""),
-            make_option("-q", "--brief",
-                        action="store_true",
-                        help="""Output only whether files differ."""),
-            make_option("--matlab",
-                        action="store_true",
-                        help="""\
-Compare MATLAB output, ignore the first lines."""),
-            make_option("--verbose",
-                        action="store_true",
-                        help="""\
-Generate verbose output."""),
-    ]
+        parser = ArgumentParser(description=self.DOC)
+        parser.add_argument('from_file', metavar='<from file>',
+                            type=str)
+        parser.add_argument('to_file', metavar='<to file>', type=str)
+        parser.add_argument("-c", "--comment-char", action="store",
+                            metavar="<comment char>", type=str,
+                            default=None, help="""Ignore lines
+                            starting with the comment char when
+                            reading either file. Default: Do not
+                            ignore any line.""")
+        parser.add_argument("-e", "--reps", type=float, default=1e-5,
+                            metavar="rEPS", help="""Relative error to
+                            be accepted in numerial
+                            comparisons. Default: %(default)g""")
+        parser.add_argument("-a", "--aeps", type=float, default=1e-8,
+                            metavar="aEPS", help="""Absolute error to
+                            be accepted in numerial
+                            comparisons. Default: %(default)g""")
+        parser.add_argument("-C", "--context", type=int, default=3,
+                            metavar="LINES", help="""Output NUM
+                            (default %(default)d) lines of copied
+                            context.""")
+        # parser.add_argument("-U", "--unified", type=int, default=3,
+        #                     metavar="LINES", help="""Output NUM
+        #                     (default %(default)d) lines of unified
+        #                     context.""")
+        parser.add_argument("-b", "--ignore-space-change",
+                            action="store_true", help="""Ignore
+                            changes in the amount of white space.""")
+        group = parser.add_argument_group('colspec')
+        group.add_argument("-s", "--splitre", type=str, default=None,
+                           help="""python regular expression used to
+                           split lines before checking for numerical
+                           changes""")
+        group.add_argument('--fixcols', type=self.columns,
+                           help="""Comma separated list of columns for
+                           fixed column format files""")
+        parser.add_argument("-r", "--recursive", default=False,
+                            action="store_true", help="""Recursively
+                            compare any subdirectories found.""")
+        parser.add_argument("-x", "--exclude", metavar='PAT',
+                            default=[], action='append',
+                            help="""Exclude files that match PAT.""")
+        parser.add_argument("-I", "--ignore-matching-lines",
+                            metavar="RE", type=str, default=[],
+                            action='append', help="""Ignore changes
+                            whose lines all match RE.""")
+        parser.add_argument("-q", "--brief", action="store_true",
+                            help="""Output only whether files
+                            differ.""")
+        parser.add_argument("--matlab", action="store_true",
+                            help="""Compare MATLAB output, ignore the
+                            first lines.""")
+        parser.add_argument("--verbose", action="store_true",
+                            help="""Generate verbose output.""")
 
-        parser = OptionParser(usage=self.DOC, option_list=option_list)
+        self.args = parser.parse_args()
 
-        (self.options, self.args) = parser.parse_args()
-
-        if self.options.verbose:
+        if self.args.verbose:
             print "options: aTol: %g; rTol: %g" % (
-                self.options.aeps, self.options.reps)
+                self.args.aeps, self.args.reps)
 
-        if len(self.args) != 2:
-            parser.error("incorrect number of arguments")
+        # if len(self.args) != 2:
+        #     parser.error("incorrect number of arguments")
 
-        if self.options.exclude:
+        if self.args.exclude:
             self.exclude = re.compile('|'.join(
-                [fnmatch.translate(i) for i in self.options.exclude])).match
+                [fnmatch.translate(i) for i in self.args.exclude])).match
 
-        if self.options.ignore_matching_lines:
+        if self.args.ignore_matching_lines:
             self.ignore_matching_lines = re.compile('|'.join(
-                self.options.ignore_matching_lines)).search
+                self.args.ignore_matching_lines)).search
 
 # Local Variables:
 # mode:python

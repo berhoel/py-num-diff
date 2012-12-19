@@ -26,6 +26,7 @@ from itertools import izip
 import numdiff
 from numdiff import cmpline, difflist, files
 
+
 class testCfile(unittest.TestCase):
     """Test method for class CFile.
 """
@@ -48,19 +49,16 @@ got it?
         for line1, line2 in izip(numdiff.CFile(inp, self.iscomment), out):
             self.assertEqual(line1, line2)
 
+
+def load_tests(loader, tests, ignore):
+    tests.addTests(doctest.DocTestSuite(numdiff))
+    tests.addTests(doctest.DocTestSuite(cmpline))
+    tests.addTests(doctest.DocTestSuite(difflist))
+    tests.addTests(doctest.DocTestSuite(files))
+    return tests
+
+
 if __name__ == '__main__':
-
-    doctest.set_unittest_reportflags(doctest.REPORT_CDIFF)
-    SUITE = unittest.TestSuite()
-
-    for mod in (numdiff, cmpline, difflist, files):
-        SUITE.addTest(doctest.DocTestSuite(mod))
-
-    RUNNER = unittest.TextTestRunner()
-    RUNRES = RUNNER.run(SUITE)
-    if RUNRES.errors or RUNRES.failures:
-        raise Exception("failed test occured")
-
     unittest.main()
 
 # Local Variables:

@@ -41,7 +41,7 @@ True
     def __init__(self, line, options=None):
         self.line = line
         if options is None:
-            self.options = {}
+            self.options = {'fixcols': None}
         else:
             self.options = options
         self.value = self.line
@@ -98,7 +98,6 @@ True
                             print "ValueError !%s! !%s!" % (
                                 self.value.split('\n')[0],
                                 other.value.split('\n')[0])
-                        pass
                 elif _INT.match(token1) or _INT.match(token2):
                     if self.options.get('verbose'):
                         print "INT !%s! !%s!" % (self.value.split('\n')[0],
@@ -127,7 +126,12 @@ True
     def splitline(self, line):
         """Split line into tokens to be evaluated.
 """
-        return self.linesplit.split(line)
+        if self.options['fixcols']:
+            return [line[i:j] for i, j in zip([0] +
+                    self.options['fixcols'][:-1],
+                    self.options['fixcols'])]
+        else:
+            return self.linesplit.split(line)
 
     def __str__(self):
         return self.line
