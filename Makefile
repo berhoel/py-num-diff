@@ -27,7 +27,7 @@ install:	test
 	python setup.py install
 	$(MAKE) -C doc install
 
-doc:
+doc:	build
 	$(MAKE) -C doc doc
 
 clean:
