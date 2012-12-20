@@ -25,6 +25,10 @@ build:
 
 install:	test
 	python setup.py install
+	$(MAKE) -C doc install
+
+doc:
+	$(MAKE) -C doc doc
 
 clean:
 	[ -n "$(IGN)" ] && $(RM) -r $(IGN) || true
@@ -33,7 +37,7 @@ clean:
 dist:	build
 	python setup.py bdist_egg
 
-.PHONY:	build	test	dist
+.PHONY:	build	test	dist	doc
 
 # Local Variables:
 # compile-command:"make test"
