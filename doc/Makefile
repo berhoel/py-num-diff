@@ -15,7 +15,7 @@ DOC_HOST=wwwsoftware@intranet
 DOC_DIR=/export/www/intranet/html/intranet/pool/ho/software/info/numdiff
 
 PYNAME = python
-export PYTHONPATH := $(PWD)/build/lib:
+export PYTHONPATH := ../build/lib
 
 all test:
 
