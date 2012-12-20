@@ -55,10 +55,14 @@ $Revision$
       <onsuccess>
         <artifactspublisher dest="${ccinst.home}/artifacts/${project.name}"
                             moveInsteadOfCopy="true"
-                            dir="${ccinst.workingbase}/${project.name}/dist/"/>
-        <artifactspublisher dest="${ccinst.home}/artifacts/${project.name}/doc"
-                            moveInsteadOfCopy="true"
-                            dir="${ccinst.workingbase}/${project.name}/doc/${project.name}_doc"/>
+                            dir="${ccinst.workingbase}/${project.name}/dist/"
+			    />
+        <artifactspublisher
+	    dest="${ccinst.home}/artifacts/${project.name}"
+	    subdirectory="doc"
+            moveInsteadOfCopy="true"
+            dir="${ccinst.workingbase}/${project.name}/doc/${project.name}_doc"
+	    />
       </onsuccess>
     </publishers>
   </project>
