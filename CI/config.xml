@@ -18,7 +18,11 @@ $Revision$
     <schedule interval="900">
       <composite>
         <exec workingdir="${ccinst.workingbase}/${project.name}"
+              command="rm" args="-fr build"/>
+        <exec workingdir="${ccinst.workingbase}/${project.name}"
               command="svn" args="up"/>
+        <exec workingdir="${ccinst.workingbase}/${project.name}"
+              command="make" args="clean"/>
         <exec workingdir="${ccinst.workingbase}/${project.name}"
               command="python" args="setup.py build"/>
         <exec workingdir="${ccinst.workingbase}/${project.name}"
