@@ -61,7 +61,7 @@ $Revision$
 	    dest="${ccinst.home}/artifacts/${project.name}"
 	    subdirectory="doc"
             moveInsteadOfCopy="true"
-            dir="${ccinst.workingbase}/${project.name}/doc/${project.name}_doc"
+            dir="${ccinst.workingbase}/${project.name}/doc/numdiff_doc"
 	    />
       </onsuccess>
     </publishers>
