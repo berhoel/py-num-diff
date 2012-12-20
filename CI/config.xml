@@ -28,7 +28,7 @@ $Revision$
         <exec workingdir="${ccinst.workingbase}/${project.name}"
               command="python" args="setup.py bdist_egg"/>
         <exec workingdir="${ccinst.workingbase}/${project.name}"
-              command="python" args="make doc"/>
+              command="make" args="doc"/>
       </composite>
     </schedule>
     <log dir="${ccinst.home}/logs/${project.name}">
