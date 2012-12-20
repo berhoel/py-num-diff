@@ -15,13 +15,13 @@ DOC_HOST=wwwsoftware@intranet
 DOC_DIR=/export/www/intranet/html/intranet/pool/ho/software/info/numdiff
 
 PYNAME = python
-export PYTHONPATH := $(PWD)/../build/lib:
+export PYTHONPATH := $(PWD)/build/lib:
 
 all test:
 
 doc:
 	[ -d numdiff_doc ] || mkdir numdiff_doc
-	python -c "from epydoc.cli import cli ; cli()"	\
+	PYTHONPATH=$(PYTHONPATH) python -c "from epydoc.cli import cli ; cli()"	\
   --config numdiff.ini -v --inheritance included
 	chmod -R a+r numdiff_doc
 
