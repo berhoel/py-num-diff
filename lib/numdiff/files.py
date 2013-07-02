@@ -65,7 +65,6 @@ True
 
 
 def fileFactory(path, base):
-
     """Factory method for generating apropriate instances of the
 different subclasses of `NumDiffFileObject`.
 
@@ -73,8 +72,6 @@ different subclasses of `NumDiffFileObject`.
 Makefile is a regular file
 >>> print '%s' % fileFactory('.', '')
 . is a directory
->>> print '%s' % fileFactory('4', 'ref/1/')
-ref/1/4 is a regular empty file
 """
     fname = os.path.join(base, path)
     statinfo = os.stat(fname)
