@@ -34,7 +34,7 @@ clean:
 	[ -n "$(IGN)" ] && $(RM) -r $(IGN) || true
 	for i in $$(find . -type d | grep -v .svn) ; do			\
  [ -n "$$(svn propget svn:ignore $$i)" ] &&				\
-  (cd $$i ; $(RM) -r "$$(svn propget svn:ignore .)") || true ;	\
+  (cd $$i ; $(RM) -rr "$$(svn propget svn:ignore .)") || true ;	\
 done
 	$(MAKE) -C test clean
 

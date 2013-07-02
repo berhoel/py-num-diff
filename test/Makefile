@@ -112,7 +112,7 @@ recur2_test:	$(PY) ref/d1/data.txt ref/d2/data.txt
 
 clean:
 	rm -f $(TESTS)
-	[ -n "$(IGN)" ] && rm -f $(IGN) || true
+	[ -n "$(IGN)" ] && rm -rf $(IGN) || true
 
 .PHONY:	build	install
 
