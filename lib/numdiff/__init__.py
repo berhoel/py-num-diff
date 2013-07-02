@@ -167,7 +167,7 @@ Compare two text files with taking into account numerical errors.
             lines1[:6] = [''] * 6
             lines2[:6] = [''] * 6
 
-        qqqqqqqqqqqqqqwwwwwwwwwwwwwwwwwwwmy_answer = DiffList(maxchunk=10)
+        my_answer = DiffList(maxchunk=10)
         if self.args.verbose:
             print("difflib.SequenceMatcher(None, lines1, lines2).get_opcodes()")
             print(difflib.SequenceMatcher(None, lines1, lines2).get_opcodes())
