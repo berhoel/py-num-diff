@@ -1,18 +1,17 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
+"""
+File identifier for numdiff.
+"""
 
-u"""
-File identifier for numdiff
+from __future__ import (print_function, division, absolute_import,
+                        unicode_literals)
 
-:author: `Berthold Hoellmann <hoel@GL-group.com>`__
-:newfield project: Project
-:project: numdiff
-:copyright: Copyright (C) 2010 by Germanischer Lloyd AG"""
-
-#  ID: $Id$
-__date__ = u"$Date$"[5:-1]
+# ID: $Id$"
+__date__ = "$Date$"[6:-1]
 __version__ = "$Revision$"[10:-1]
-__docformat__ = "restructuredtext en"
+__author__ = "`Berthold Höllmann <berthold.hoellmann@GL-group.com>`__"
+__copyright__ = "Copyright © 2010 by Germanischer Lloyd SE"
 
 import os.path
 
@@ -68,9 +67,9 @@ def fileFactory(path, base):
     """Factory method for generating apropriate instances of the
 different subclasses of `NumDiffFileObject`.
 
->>> print '%s' % fileFactory('Makefile', '')
+>>> print('%s' % fileFactory('Makefile', ''))
 Makefile is a regular file
->>> print '%s' % fileFactory('.', '')
+>>> print('%s' % fileFactory('.', ''))
 . is a directory
 """
     fname = os.path.join(base, path)
@@ -82,8 +81,8 @@ Makefile is a regular file
     return RegularFile(path, base)
 
 # Local Variables:
-# mode:python
-# mode:flyspell
-# ispell-local-dictionary:"en"
-# compile-command:"make -C ../../test test"
+# mode: python
+# mode: flyspell
+# ispell-local-dictionary: "en"
+# compile-command: "make -C ../../test test"
 # End:

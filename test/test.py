@@ -15,8 +15,11 @@ __copyright__ = "Copyright © 2005 by Germanischer Lloyd SE"
 
 import doctest
 import unittest
-import cStringIO
-from itertools import izip
+import sys
+if sys.version_info < (3, 1):
+    from cStringIO import StringIO
+else:
+    from io import StringIO
 
 import numdiff
 from numdiff import cmpline, difflist, files
@@ -34,14 +37,14 @@ class testCfile(unittest.TestCase):
     def test1(self):
         """First test.
 """
-        inp = cStringIO.StringIO("""test
+        inp = StringIO("""test
 ! hallo
 got it?
 """)
-        out = cStringIO.StringIO("""test
+        out = StringIO("""test
 got it?
 """)
-        for line1, line2 in izip(numdiff.CFile(inp, self.iscomment), out):
+        for line1, line2 in zip(numdiff.CFile(inp, self.iscomment), out):
             self.assertEqual(line1, line2)
 
 

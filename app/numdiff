@@ -1,19 +1,25 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
+"""
+Numerical diff for text files.
+"""
 
-# Copyright (C) 2003, 2005 by Germanischer Lloyd
+from __future__ import (print_function, division, absolute_import,
+                        unicode_literals)
 
-# ======================================================================
-# Task      numerical diff for text files
-# ----------------------------------------------------------------------
-# Author    Berthold Höllmann <hoel@GL-Group.com>
-# Project   numdiff
-# ======================================================================
+# ID: $Id$"
+__date__ = "$Date$"[6:-1]
+__version__ = "$Revision$"[10:-1]
+__author__ = "`Berthold Höllmann <berthold.hoellmann@GL-group.com>`__"
+__copyright__ = "Copyright © 2003, 2005 by Germanischer Lloyd SE"
 
 from numdiff import Main
 MAIN = Main()
 raise SystemExit(MAIN())
 
-# Local Variables:;
-# compile-command:"make -C ../test test";
-# End:;
+# Local Variables:
+# mode: python
+# mode: flyspell
+# ispell-local-dictionary: "en"
+# compile-command: "make -C ../test test"
+# End:

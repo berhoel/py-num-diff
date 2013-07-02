@@ -1,20 +1,18 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-
-u"""
+"""
 Class for alowing numerical diffing of text lines.
+"""
 
-:author: `Berthold Hoellmann <hoel@GL-group.com>`__
-:newfield project: Project
-:project: numdiff
-:copyright: Copyright (C) 2010 by Germanischer Lloyd AG"""
+from __future__ import (print_function, division, absolute_import,
+                        unicode_literals)
 
-#  ID: $Id$
-__date__ = u"$Date$"[5:-1]
+# ID: $Id$"
+__date__ = "$Date$"[6:-1]
 __version__ = "$Revision$"[10:-1]
-__docformat__ = "restructuredtext en"
+__author__ = "`Berthold Höllmann <berthold.hoellmann@GL-group.com>`__"
+__copyright__ = "Copyright © 2010 by Germanischer Lloyd SE"
 
-from itertools import izip
 import re
 
 __all__ = ['CmpLine']
@@ -57,30 +55,30 @@ True
 
     def __eq__(self, other):
         if self.options.get('verbose'):
-            print "__EQ__ !%s! !%s!" % (self.value.split('\n')[0],
-                                        other.value.split('\n')[0])
+            print("__EQ__ !%s! !%s!" % (self.value.split('\n')[0],
+                                        other.value.split('\n')[0]))
         if self.ignore is not None and self.ignore.search(self.value) and \
           self.ignore.search(other.value):
             if self.options.get('verbose'):
-                print "IGNORE !%s! !%s!" % (self.value.split('\n')[0],
-                                            other.value.split('\n')[0])
+                print("IGNORE !%s! !%s!" % (self.value.split('\n')[0],
+                                            other.value.split('\n')[0]))
             return True
         elif self.value.split('\n')[0] == other.value.split('\n')[0]:
             if self.options.get('verbose'):
-                print "EQUAL !%s! !%s!" % (self.value.split('\n')[0],
-                                           other.value.split('\n')[0])
+                print("EQUAL !%s! !%s!" % (self.value.split('\n')[0],
+                                           other.value.split('\n')[0]))
             return True
         else:
             sLine1 = self.splitline(self.value.split('\n')[0])
             sLine2 = self.splitline(other.value.split('\n')[0])
             if len(sLine1) != len(sLine2):
                 if self.options.get('verbose'):
-                    print "SPLITLEN !%s! !%s!" % (
-                        self.value.split('\n')[0], other.value.split('\n')[0])
+                    print("SPLITLEN !%s! !%s!" % (
+                        self.value.split('\n')[0], other.value.split('\n')[0]))
                 return False
-            for token1, token2 in izip(sLine1, sLine2):
+            for token1, token2 in zip(sLine1, sLine2):
                 if self.options.get('verbose'):
-                    print 'token1: ', token1, '; token2: ', token2
+                    print('token1: ', token1, '; token2: ', token2)
                 if self.options.get("ignore_space", False):
                     token1 = token1.strip()
                     token2 = token2.strip()
@@ -88,38 +86,38 @@ True
                     continue
                 elif _FLOAT.match(token1) or _FLOAT.match(token2):
                     if self.options.get('verbose'):
-                        print "FLOAT !%s! !%s!" % (self.value.split('\n')[0],
-                                                   other.value.split('\n')[0])
+                        print("FLOAT !%s! !%s!" % (self.value.split('\n')[0],
+                                                   other.value.split('\n')[0]))
                     try:
                         if self.fequals(float(token1), float(token2)):
                             continue
                     except ValueError:
                         if self.options.get('verbose'):
-                            print "ValueError !%s! !%s!" % (
+                            print("ValueError !%s! !%s!" % (
                                 self.value.split('\n')[0],
-                                other.value.split('\n')[0])
+                                other.value.split('\n')[0]))
                 elif _INT.match(token1) or _INT.match(token2):
                     if self.options.get('verbose'):
-                        print "INT !%s! !%s!" % (self.value.split('\n')[0],
-                                                 other.value.split('\n')[0])
+                        print("INT !%s! !%s!" % (self.value.split('\n')[0],
+                                                 other.value.split('\n')[0]))
                     if self.fequals(int(token1), int(token2)):
                         continue
 
                 if self.options.get('verbose'):
-                    print "TOKEN !%s! !%s!" % (
-                        self.value.split('\n')[0], other.value.split('\n')[0])
+                    print("TOKEN !%s! !%s!" % (
+                        self.value.split('\n')[0], other.value.split('\n')[0]))
                 return False
             if self.options.get('verbose'):
-                print "SAME !%s! !%s!" % (
-                    self.value.split('\n')[0], other.value.split('\n')[0])
+                print("SAME !%s! !%s!" % (
+                    self.value.split('\n')[0], other.value.split('\n')[0]))
             return True
 
     def fequals(self, float1, float2):
         """Check for arguments beeing numerical equal.
 """
         if self.options.get('verbose'):
-            print ("fequals: ", float1, float2,
-                   abs(float1 - float2), (self.aeps + self.reps * abs(float2)))
+            print("fequals: ", float1, float2,
+                  abs(float1 - float2), (self.aeps + self.reps * abs(float2)))
 
         return abs(float1 - float2) <= (self.aeps + self.reps * abs(float2))
 
@@ -149,8 +147,8 @@ True
         return 1
 
 # Local Variables:
-# mode:python
-# mode:flyspell
-# ispell-local-dictionary:"en"
-# compile-command:"make -C ../../test test"
+# mode: python
+# mode: flyspell
+# ispell-local-dictionary: "en"
+# compile-command: "make -C ../../test test"
 # End:

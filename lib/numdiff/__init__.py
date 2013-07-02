@@ -1,23 +1,24 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-
-u"""
+"""
 numerical diff for text files
-
-:author: `Berthold Höllmann <berthold.hoellmann@gl-group.com>`__
-:newfield project: Project
-:project: numdiff
-:copyright: Copyright (C) 2005 by Germanischer Lloyd AG
 """
 
-from __future__ import absolute_import
+from __future__ import (print_function, division, absolute_import,
+                        unicode_literals)
+
+# ID: $Id$"
+__date__ = "$Date$"[6:-1]
+__version__ = "$Revision$"[10:-1]
+__author__ = "`Berthold Höllmann <berthold.hoellmann@GL-group.com>`__"
+__copyright__ = "Copyright © 2005 by Germanischer Lloyd SE"
 
 import difflib
 import fnmatch
 import os
 import os.path
+import sys
 import re
-from itertools import izip
 from argparse import ArgumentParser
 
 from .files import fileFactory, RegularFile, Directory
@@ -143,7 +144,7 @@ Compare two text files with taking into account numerical errors.
                                      os.path.split(self.args.from_file)[-1])
             else:
                 file2 = self.args.to_file
-            print "comparing '%s' and '%s'" % (file1, file2)
+            print("comparing '%s' and '%s'" % (file1, file2))
             result = self.docheck(file1, file2)
         if result:
             return 1
@@ -166,10 +167,10 @@ Compare two text files with taking into account numerical errors.
             lines1[:6] = [''] * 6
             lines2[:6] = [''] * 6
 
-        my_answer = DiffList(maxchunk=10)
+        qqqqqqqqqqqqqqwwwwwwwwwwwwwwwwwwwmy_answer = DiffList(maxchunk=10)
         if self.args.verbose:
-            print "difflib.SequenceMatcher(None, lines1, lines2).get_opcodes()"
-            print difflib.SequenceMatcher(None, lines1, lines2).get_opcodes()
+            print("difflib.SequenceMatcher(None, lines1, lines2).get_opcodes()")
+            print(difflib.SequenceMatcher(None, lines1, lines2).get_opcodes())
         for (tag, ai, aj, bi, bj) in difflib.SequenceMatcher(
                 None, lines1, lines2).get_opcodes():
             if tag in ('delete', 'insert', 'equal'):
@@ -185,12 +186,12 @@ Compare two text files with taking into account numerical errors.
                                  None, a, b).get_opcodes()])
 
         if self.args.verbose:
-            print "lines1:"
-            print ['%s' % i for i in lines1]
-            print "lines2:"
-            print ['%s' % i for i in lines2]
-            print "my_answer"
-            print my_answer
+            print("lines1:")
+            print(['%s' % i for i in lines1])
+            print("lines2:")
+            print(['%s' % i for i in lines2])
+            print("my_answer")
+            print(my_answer)
         res = '\n'.join(
             context_diff(
                 my_answer,
@@ -198,9 +199,9 @@ Compare two text files with taking into account numerical errors.
                 n=self.args.context, lineterm=''))
         if bool(res):
             if self.args.brief:
-                print "Files %s and %s differ" % (file1, file2)
+                print("Files %s and %s differ" % (file1, file2))
             else:
-                print res
+                print(res)
         return bool(res)
 
     def shorttree(self, base, dirs, fnames, iDir):
@@ -208,27 +209,30 @@ Compare two text files with taking into account numerical errors.
 tree for the base dir part `iDir`.
 
 >>> w = Main()
->>> print w.shorttree(iDir='ref/1', *('ref/1', ['1', '.svn'], ['2', '3', '4']))
-['1', '.svn', '2', '3', '4']
->>> print ['/'.join(os.path.split(i)) for i in w.shorttree(iDir='ref/1',
-...        *('ref/1/1', ['.svn'], []))]
-['1/.svn']
->>> print ['/'.join(os.path.split(i)) for i in w.shorttree(iDir='ref/1',
+>>> w.shorttree(iDir='ref/1', *('ref/1', ['1', '.svn'], ['2', '3', '4'])
+...     ) == ['1', '.svn', '2', '3', '4']
+True
+>>> ['/'.join(os.path.split(i)) for i in w.shorttree(iDir='ref/1',
+...        *('ref/1/1', ['.svn'], []))] == ['1/.svn']
+True
+>>> list(['/'.join(os.path.split(i)) for i in w.shorttree(iDir='ref/1',
 ...                   *('ref/1/1/.svn',
 ...                     ['text-base', 'prop-base', 'props', 'tmp'],
-...                     ['entries', 'all-wcprops']))]
-['1/.svn/text-base', '1/.svn/prop-base', '1/.svn/props', '1/.svn/tmp', '1/.svn/entries', '1/.svn/all-wcprops']
+...                     ['entries', 'all-wcprops']))]) == [
+...     '1/.svn/text-base', '1/.svn/prop-base', '1/.svn/props', '1/.svn/tmp',
+...     '1/.svn/entries', '1/.svn/all-wcprops']
+True
 >>> w.exclude = re.compile(r'\.svn').match
->>> print w.shorttree(iDir='ref/1', *('ref/1', ['1', '.svn'],
-...      ['2', '3', '4']))
-['1', '2', '3', '4']
->>> print w.shorttree(iDir='ref/1', *('ref/1/1', ['.svn'], []))
-[]
->>> print w.shorttree(iDir='ref/1',
-...                   *('ref/1/1/.svn',
-...                     ['text-base', 'prop-base', 'props', 'tmp'],
-...                     ['entries', 'all-wcprops']))
-[]
+>>> w.shorttree(iDir='ref/1', *('ref/1', ['1', '.svn'],
+...      ['2', '3', '4'])) == ['1', '2', '3', '4']
+True
+>>> w.shorttree(iDir='ref/1', *('ref/1/1', ['.svn'], [])) == []
+True
+>>> w.shorttree(iDir='ref/1',
+...             *('ref/1/1/.svn',
+...               ['text-base', 'prop-base', 'props', 'tmp'],
+...               ['entries', 'all-wcprops'])) == []
+True
 """
         if self.exclude(os.path.split(base)[-1]):
             return []
@@ -269,7 +273,10 @@ by `None`.
         result = []
         for el1 in ilst1:
             try:
-                el2 = ilst2.next()
+                if sys.version_info < (3, 1):
+                    el2 = ilst2.next()
+                else:
+                    el2 = next(ilst2)
             except StopIteration:
                 el2 = None
             if el1 == el2 or el2 is None:
@@ -277,12 +284,18 @@ by `None`.
             elif el1 in lst2:
                 while not el2 in lst1:
                     result.append((None, el2))
-                    el2 = ilst2.next()
+                    if sys.version_info < (3, 1):
+                        el2 = ilst2.next()
+                    else:
+                        el2 = next(ilst2)
                 result.append((el1, el2))
             elif el2 in lst1:
                 while not el1 in lst2:
                     result.append((el1, None))
-                    el1 = ilst1.next()
+                    if sys.version_info < (3, 1):
+                        el1 = ilst1.next()
+                    else:
+                        el1 = next(ilst1)
                 result.append((el1, el2))
             elif el1 < el2:
                 result.append((el1, None))
@@ -308,7 +321,7 @@ by `None`.
         tree2 = os.walk(dir2)
         res_tree1 = []
         res_tree2 = []
-        for xtree1, xtree2 in izip(tree1, tree2):
+        for xtree1, xtree2 in zip(tree1, tree2):
             dirs, files = xtree1[1:]
             for i in dirs[::-1]:
                 if self.exclude(i):
@@ -334,7 +347,7 @@ by `None`.
 >>> Main.onlyIn('dir1', 'entry1')
 Only in dir1: entry1.
 """
-        print "Only in %s: %s." % (base, name)
+        print("Only in %s: %s." % (base, name))
 
     def deepcheck(self, dir1, dir2):
         """Intiate comparison of files in two directories.
@@ -346,8 +359,8 @@ Only in dir1: entry1.
         failed = False
         composite = self.dirtreecomp(dir1, dir2)
         for i, j in composite:
-            print "comparing '%s' and '%s'" % (
-                os.path.join(dir1, i), os.path.join(dir2, j if j else i))
+            print("comparing '%s' and '%s'" % (
+                os.path.join(dir1, i), os.path.join(dir2, j if j else i)))
             if j is None:
                 self.onlyIn(dir1, i)
                 failed = True
@@ -361,7 +374,7 @@ Only in dir1: entry1.
             if ((obj1.__class__ != obj2.__class__) and
                 not (isinstance(obj1, RegularFile) and
                      isinstance(obj2, RegularFile))):
-                print "File %s while file %s" % (obj1, obj2)
+                print("File %s while file %s" % (obj1, obj2))
                 failed = True
             elif not isinstance(obj1, Directory):
                 failed = self.docheck(obj1.name, obj2.name) or failed
@@ -438,8 +451,8 @@ Parse command line.
         self.args = parser.parse_args()
 
         if self.args.verbose:
-            print "options: aTol: %g; rTol: %g" % (
-                self.args.aeps, self.args.reps)
+            print("options: aTol: %g; rTol: %g" % (
+                self.args.aeps, self.args.reps))
 
         # if len(self.args) != 2:
         #     parser.error("incorrect number of arguments")
@@ -453,8 +466,8 @@ Parse command line.
                 self.args.ignore_matching_lines)).search
 
 # Local Variables:
-# mode:python
-# mode:flyspell
-# ispell-local-dictionary:"en"
-# compile-command:"make -C ../../test test"
+# mode: python
+# mode: flyspell
+# ispell-local-dictionary: "en"
+# compile-command: "make -C ../../test test"
 # End:

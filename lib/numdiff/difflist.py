@@ -1,19 +1,17 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-
-u"""
+"""
 Class for handling combining difflib.SequenceMatcher result merging.
-
-:author: `Berthold Hoellmann <hoel@GL-group.com>`__
-:newfield project: Project
-:project: numdiff
-:copyright: Copyright (C) 2012 by Germanischer Lloyd SE
 """
 
-# ID: $Id$
-__date__ = u"$Date$"[6:-1]
+from __future__ import (print_function, division, absolute_import,
+                        unicode_literals)
+
+# ID: $Id$"
+__date__ = "$Date$"[6:-1]
 __version__ = "$Revision$"[10:-1]
-__docformat__ = "restructuredtext en"
+__author__ = "`Berthold Höllmann <berthold.hoellmann@GL-group.com>`__"
+__copyright__ = "Copyright © 2012 by Germanischer Lloyd SE"
 
 
 class DiffList(object):
@@ -30,14 +28,15 @@ class DiffList(object):
 >>> a.append(('replace', 0, 3, 0, 3))
 >>> a.append(('replace', 3, 5, 3, 5))
 >>> a.append(('replace', 5, 9, 5, 9))
->>> print a
-[('replace', 0, 5, 0, 5), ('replace', 5, 9, 5, 9)]
+>>> a.vals == [('replace', 0, 5, 0, 5), ('replace', 5, 9, 5, 9)]
+True
 >>> a = DiffList()
 >>> a.append(('equal', 0, 5, 0, 5))
 >>> a.append(('replace', 5, 6, 5, 6))
 >>> a.append(('equal', 6, 8, 6, 8))
->>> print a
-[('equal', 0, 5, 0, 5), ('replace', 5, 6, 5, 6), ('equal', 6, 8, 6, 8)]
+>>> a.vals == [('equal', 0, 5, 0, 5), ('replace', 5, 6, 5, 6),
+...     ('equal', 6, 8, 6, 8)]
+True
 
 """
         if self.vals and self.vals[-1][0] == val[0]:
@@ -58,12 +57,16 @@ class DiffList(object):
     @staticmethod
     def prepres(type, ai, aj, bi, bj, maxchunk):
         """
->>> print DiffList.prepres('replace', 0, 5, 2, 7, 2)
-[('replace', 0, 2, 2, 4), ('replace', 2, 4, 4, 6), ('replace', 4, 5, 6, 7)]
->>> print DiffList.prepres('replace', 0, 5, 2, 7, 2)[::-1]
-[('replace', 4, 5, 6, 7), ('replace', 2, 4, 4, 6), ('replace', 0, 2, 2, 4)]
->>> print DiffList.prepres('A', 0, 5, 2, 7, 2)
-(('A', 0, 5, 2, 7),)
+>>> DiffList.prepres('replace', 0, 5, 2, 7, 2) == [
+...     ('replace', 0, 2, 2, 4), ('replace', 2, 4, 4, 6),
+...      ('replace', 4, 5, 6, 7)]
+True
+>>> DiffList.prepres('replace', 0, 5, 2, 7, 2)[::-1] == [
+...     ('replace', 4, 5, 6, 7), ('replace', 2, 4, 4, 6),
+...     ('replace', 0, 2, 2, 4)]
+True
+>>> DiffList.prepres('A', 0, 5, 2, 7, 2) == (('A', 0, 5, 2, 7), )
+True
 """
         if maxchunk is None or type != 'replace':
             return ((type, ai, aj, bi, bj), )
@@ -79,11 +82,12 @@ class DiffList(object):
         """
 >>> a = DiffList()
 >>> a.extend([('equal', 0, 3, 0, 3), ('equal', 3, 5, 3, 5)])
->>> print a
-[('equal', 0, 5, 0, 5)]
+>>> a.vals == [('equal', 0, 5, 0, 5)]
+True
 >>> a.extend([('replace', 5, 6, 5, 6), ('equal', 6, 8, 6, 8)])
->>> print a
-[('equal', 0, 5, 0, 5), ('replace', 5, 6, 5, 6), ('equal', 6, 8, 6, 8)]
+>>> a.vals == [('equal', 0, 5, 0, 5), ('replace', 5, 6, 5, 6),
+...         ('equal', 6, 8, 6, 8)]
+True
 """
         [self.append(i) for i in vals]
 
@@ -91,8 +95,8 @@ class DiffList(object):
         """
 >>> a = DiffList()
 >>> a.extend((('equal', 0, 3, 0, 3), ('equal', 3, 5, 3, 5)))
->>> print a
-[('equal', 0, 5, 0, 5)]
+>>> a.vals == [('equal', 0, 5, 0, 5)]
+True
 """
         return str(self.vals)
 
@@ -100,8 +104,8 @@ class DiffList(object):
         """
 >>> a = DiffList(maxchunk=2)
 >>> a.extend((('replace', 0, 5, 0, 5), ))
->>> print a[0]
-('replace', 0, 2, 0, 2)
+>>> a[0] == ('replace', 0, 2, 0, 2)
+True
 """
         return self.vals[i]
 
@@ -110,21 +114,22 @@ class DiffList(object):
 >>> a = DiffList(maxchunk=2)
 >>> a.extend((('replace', 0, 5, 0, 5), ))
 >>> a[2] = ('A', 4, 5, 4, 5)
->>> print a
-[('replace', 0, 2, 0, 2), ('replace', 2, 4, 2, 4), ('A', 4, 5, 4, 5)]
+>>> a.vals == [('replace', 0, 2, 0, 2), ('replace', 2, 4, 2, 4),
+...     ('A', 4, 5, 4, 5)]
+True
 """
         self.vals[i] = vals
 
     def __len__(self):
         """
->>> print len(DiffList.prepres('replace', 0, 5, 2, 7, 2))
+>>> print(len(DiffList.prepres('replace', 0, 5, 2, 7, 2)))
 3
 """
         return len(self.vals)
 
 # Local Variables:
-# mode:python
-# mode:flyspell
-# ispell-local-dictionary:"en"
-# compile-command:"make -C ../../test test"
+# mode: python
+# mode: flyspell
+# ispell-local-dictionary: "en"
+# compile-command: "make -C ../../test test"
 # End:

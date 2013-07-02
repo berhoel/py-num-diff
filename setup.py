@@ -1,33 +1,28 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-
-u"""
-setup file for numdiff
-
-:author: `Berthold Hoellmann <hoel@GL-group.com>`__
-:newfield project: Project
-:project: numdiff
-:copyright: Copyright (C) 2006 by Germanischer Lloyd AG
+"""
+Setup file for numdiff.
 """
 
-# ID: $Id$
-__date__ = u"$Date$"[5:-1]
+# ID: $Id$"
+__date__ = "$Date$"[6:-1]
 __version__ = "$Revision$"[10:-1]
-__docformat__ = "restructuredtext en"
+__author__ = "`Berthold Höllmann <berthold.hoellmann@GL-group.com>`__"
+__copyright__ = "Copyright © 2013 by Germanischer Lloyd SE"
 
 import os.path
 import re
 from setuptools import setup
 from distutils.command import build_scripts
 
-build_scripts.first_line_re = re.compile(r'^###!.*python(\s+.*)?$')
+build_scripts.first_line_re = re.compile(br'^###!.*python(\s+.*)?$')
 
 if __name__ == '__main__':
     setup(name='numdiff',
           version='1.1+',
           description="Numerical diff, written in Python",
           keywords="diff numerical compare",
-          author=u'Berthold Höllmann',
+          author='Berthold Höllmann',
           author_email="hoel@GL-Group.com",
           license='Other/Proprietary License',
           package_dir={'': 'lib'},
@@ -44,7 +39,8 @@ if __name__ == '__main__':
           )
 
 # Local Variables:
-# mode:python
-# mode:flyspell
-# compile-command:"python setup.py build"
+# mode: python
+# mode: flyspell
+# ispell-local-dictionary: "en"
+# compile-command: "python setup.py build"
 # End:
