@@ -242,9 +242,9 @@ True
         else:
             i = len(iDir) + 1
         lBase = base[i:]
-        return [os.path.join(lBase, i)
-                for i in dirs + fnames
-                if not self.exclude(i)]
+        return [os.path.join(lBase, j)
+                for j in dirs + fnames
+                if not self.exclude(j)]
 
     @staticmethod
     def lstcomp(lst1, lst2):
@@ -322,21 +322,7 @@ by `None`.
         res_tree1 = []
         res_tree2 = []
         for xtree1, xtree2 in zip(tree1, tree2):
-            dirs, files = xtree1[1:]
-            for i in dirs[::-1]:
-                if self.exclude(i):
-                    dirs.remove(i)
-            for i in files[::-1]:
-                if self.exclude(i):
-                    files.remove(i)
             res_tree1 += self.shorttree(iDir=dir1, *xtree1)
-            dirs, files = xtree2[1:]
-            for i in dirs[::-1]:
-                if self.exclude(i):
-                    dirs.remove(i)
-            for i in files[::-1]:
-                if self.exclude(i):
-                    files.remove(i)
             res_tree2 += self.shorttree(iDir=dir2, *xtree2)
         return self.lstcomp(res_tree1, res_tree2)
 
@@ -360,7 +346,7 @@ Only in dir1: entry1.
         composite = self.dirtreecomp(dir1, dir2)
         for i, j in composite:
             print("comparing '%s' and '%s'" % (
-                os.path.join(dir1, i), os.path.join(dir2, j if j else i)))
+                os.path.join(dir1, i if i else ""), os.path.join(dir2, j if j else i)))
             if j is None:
                 self.onlyIn(dir1, i)
                 failed = True
