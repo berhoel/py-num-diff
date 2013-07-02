@@ -1,22 +1,17 @@
 #! /usr/bin/env python
-# -*- coding: iso-8859-15 -*-
-
-# Copyright (C) 2005 by Germanischer Lloyd AG
-
+# -*- coding: utf-8 -*-
 """
-Module    test
-Task      test functionality for numdiff
-----------------------------------------------------------------------
-Author    Berthold H�llmann <hoel@GL-Group.com>
-Project   numdiff
+Test functionality for numdiff.
 """
 
-#  CVSID: $Id$
-__author__ = ("2005 Germanischer Lloyd (author: $Author$) " +
-              "hoel@GL-Group.com")
-__date__ = "$Date$"
+from __future__ import (print_function, division, absolute_import,
+                        unicode_literals)
+
+# ID: $Id$"
+__date__ = "$Date$"[6:-1]
 __version__ = "$Revision$"[10:-1]
-__package_info__ = """ """
+__author__ = "`Berthold Höllmann <berthold.hoellmann@GL-group.com>`__"
+__copyright__ = "Copyright © 2005 by Germanischer Lloyd SE"
 
 import doctest
 import unittest
@@ -62,5 +57,8 @@ if __name__ == '__main__':
     unittest.main()
 
 # Local Variables:
-# compile-command:"python test.py"
+# mode: python
+# mode: flyspell
+# ispell-local-dictionary: "en"
+# compile-command: "python test.py"
 # End:

@@ -22,25 +22,26 @@ from distutils.command import build_scripts
 
 build_scripts.first_line_re = re.compile(r'^###!.*python(\s+.*)?$')
 
-setup(name='numdiff',
-      version='1.1+',
-      description="Numerical diff, written in Python",
-      keywords="diff numerical compare",
-      author=u'Berthold Höllmann',
-      author_email="hoel@GL-Group.com",
-      license='Other/Proprietary License',
-      package_dir={'': 'lib'},
-      packages=['numdiff'],
-      scripts=[os.path.join('app', 'numdiff')],
-      classifiers=[
-          "Development Status :: 5 - Production/Stable",
-          "Topic :: Utilities",
-          "Environment :: Win32 (MS Windows)",
-          "Environment :: Linux",
-          "Intended Audience :: End Users/Desktop",
-          "License :: Other/Proprietary License",
-          "Topic :: Scientific/Engineering",]
-      )
+if __name__ == '__main__':
+    setup(name='numdiff',
+          version='1.1+',
+          description="Numerical diff, written in Python",
+          keywords="diff numerical compare",
+          author=u'Berthold Höllmann',
+          author_email="hoel@GL-Group.com",
+          license='Other/Proprietary License',
+          package_dir={'': 'lib'},
+          packages=['numdiff'],
+          scripts=[os.path.join('app', 'numdiff')],
+          classifiers=[
+              "Development Status :: 5 - Production/Stable",
+              "Topic :: Utilities",
+              "Environment :: Win32 (MS Windows)",
+              "Environment :: Linux",
+              "Intended Audience :: End Users/Desktop",
+              "License :: Other/Proprietary License",
+              "Topic :: Scientific/Engineering"]
+          )
 
 # Local Variables:
 # mode:python
