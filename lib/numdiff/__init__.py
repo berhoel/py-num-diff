@@ -20,6 +20,8 @@ import os.path
 import sys
 import re
 from argparse import ArgumentParser
+if sys.version_info < (3, 1):
+    from itertools import izip as zip
 
 from .files import fileFactory, RegularFile, Directory
 from .cmpline import CmpLine
@@ -317,13 +319,19 @@ by `None`.
     def dirtreecomp(self, dir1, dir2):
         """Compare two directory trees for common enties.
 """
-        tree1 = os.walk(dir1)
-        tree2 = os.walk(dir2)
+        tree1 = os.walk(dir1, topdown=True)
+        tree2 = os.walk(dir2, topdown=True)
         res_tree1 = []
         res_tree2 = []
         for xtree1, xtree2 in zip(tree1, tree2):
-            res_tree1 += self.shorttree(iDir=dir1, *xtree1)
-            res_tree2 += self.shorttree(iDir=dir2, *xtree2)
+            dirs, files = xtree1[1:]
+            [dirs.remove(i) for i in dirs[::-1] if self.exclude(i)]
+            [files.remove(i) for i in files[::-1] if self.exclude(i)]
+            res_tree1 += self.shorttree(xtree1[0], dirs, files, iDir=dir1)
+            dirs, files = xtree2[1:]
+            [dirs.remove(i) for i in dirs[::-1] if self.exclude(i)]
+            [files.remove(i) for i in files[::-1] if self.exclude(i)]
+            res_tree2 += self.shorttree(xtree1[0], dirs, files, iDir=dir2)
         return self.lstcomp(res_tree1, res_tree2)
 
     @staticmethod
