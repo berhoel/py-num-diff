@@ -45,7 +45,7 @@ class NumDiffError(SystemExit):
 def context_diff(sequence, a, b, fromfile='', tofile='',
                  fromfiledate='', tofiledate='', n=3, lineterm='\n'):
     r"""
-Modified context_diff taken from stamdard Python difflib.
+Modified context_diff taken from standard Python difflib.
 
 This version takes
 """
