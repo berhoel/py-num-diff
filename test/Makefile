@@ -41,7 +41,7 @@ else
 PYPATH = PYTHONPATH=.:../lib
 endif
 PYTHON = $(PYPATH) python
-NUMDIFF=PATH="../app:$(PATH)" $(PYPATH) numdiff
+NUMDIFF=PATH="../app:$(PATH)" $(PYPATH) python -c "from numdiff import main;main()"
 
 IGN = $(shell [ -n "$$(svn propget svn:ignore .)" ] && echo "$$(svn propget svn:ignore .)")
 
@@ -68,15 +68,15 @@ second_aopt = --reps=2e-3
 third_aopt = --reps=2e-3
 NASTRAN_aopt = --comment-char='$$' --fixcols=8,24,40,56,72,80
 %_atest:	$(PY) ref/%1.txt ref/%2.txt
-	$(PYTHON) ../app/numdiff $($*_aopt) ref/$*1.txt ref/$*2.txt
+	$(PYTHON) -c "from numdiff import main;main()" $($*_aopt) ref/$*1.txt ref/$*2.txt
 	touch $@
 
 run4_atest:	$(PY) ref/third1.txt ref/third2.txt
-	$(PYTHON) ../app/numdiff ref/third1.txt ref/third2.txt --aeps=1e-11 ; [ $$? -eq 1 ]
+	$(PYTHON) -c "from numdiff import main;main()" ref/third1.txt ref/third2.txt --aeps=1e-11 ; [ $$? -eq 1 ]
 	touch $@
 
 run5_atest:	$(PY) ref/mixed1.txt ref/mixed2.txt
-	$(PYTHON) ../app/numdiff -b ref/mixed1.txt ref/mixed2.txt
+	$(PYTHON) -c "from numdiff import main;main()" -b ref/mixed1.txt ref/mixed2.txt
 	touch $@
 
 first_copt = --comment-char='\#'

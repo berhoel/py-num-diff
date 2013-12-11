@@ -32,7 +32,7 @@ __date__ = u"$Date$"[5:-1]
 __version__ = "$Revision$"[10:-1]
 __docformat__ = "restructuredtext en"
 
-__all__ = ['Main']
+__all__ = ['main']
 
 
 class NumDiffError(SystemExit):
@@ -460,6 +460,11 @@ Parse command line.
         if self.args.ignore_matching_lines:
             self.ignore_matching_lines = re.compile('|'.join(
                 self.args.ignore_matching_lines)).search
+
+
+def main():
+    prog = Main()
+    raise SystemExit(prog())
 
 # Local Variables:
 # mode: python
