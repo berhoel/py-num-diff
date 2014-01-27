@@ -13,6 +13,7 @@ __version__ = "$Revision$"[10:-1]
 __author__ = "`Berthold Höllmann <berthold.hoellmann@GL-group.com>`__"
 __copyright__ = "Copyright © 2005 by Germanischer Lloyd SE"
 
+import codecs
 import difflib
 import fnmatch
 import os
@@ -26,11 +27,6 @@ if sys.version_info < (3, 1):
 from .files import fileFactory, RegularFile, Directory
 from .cmpline import CmpLine
 from .difflist import DiffList
-
-#  CVSID: $Id$
-__date__ = u"$Date$"[5:-1]
-__version__ = "$Revision$"[10:-1]
-__docformat__ = "restructuredtext en"
 
 __all__ = ['main']
 
@@ -156,12 +152,16 @@ Compare two text files with taking into account numerical errors.
     def docheck(self, file1, file2):
         """Initiate comparing of two files.
 """
-        lines1 = [i.split('\n')[0]
-                  for i in CFile(open(file1, 'r'), self.iscomment,
+        lines1 = [i.strip()
+                  for i in CFile(codecs.open(file1, 'r', encoding='utf-8',
+                                             errors='replace'),
+                                 self.iscomment,
                                  self.args.ignore_space_change or
                                  self.args.matlab)]
-        lines2 = [i.split('\n')[0]
-                  for i in CFile(open(file2, 'r'), self.iscomment,
+        lines2 = [i.strip()
+                  for i in CFile(codecs.open(file2, 'r', encoding='utf-8',
+                                             errors='replace'),
+                                 self.iscomment,
                                  self.args.ignore_space_change or
                                  self.args.matlab)]
 
@@ -171,7 +171,8 @@ Compare two text files with taking into account numerical errors.
 
         my_answer = DiffList(maxchunk=10)
         if self.args.verbose:
-            print("difflib.SequenceMatcher(None, lines1, lines2).get_opcodes()")
+            print(
+                "difflib.SequenceMatcher(None, lines1, lines2).get_opcodes()")
             print(difflib.SequenceMatcher(None, lines1, lines2).get_opcodes())
         for (tag, ai, aj, bi, bj) in difflib.SequenceMatcher(
                 None, lines1, lines2).get_opcodes():
@@ -185,7 +186,7 @@ Compare two text files with taking into account numerical errors.
                     my_answer.extend(
                         [(i[0], i[1] + AI, i[2] + AI, i[3] + BI, i[4] + BI)
                          for i in difflib.SequenceMatcher(
-                                 None, a, b).get_opcodes()])
+                             None, a, b).get_opcodes()])
 
         if self.args.verbose:
             print("lines1:")
@@ -255,20 +256,6 @@ by `None`.
 
     >>> Main().lstcomp([1,2,3,5,6], [1,3,4,5])
     [(1, 1), (2, None), (3, 3), (None, 4), (5, 5), (6, None)]
-    >>> Main().lstcomp([1,3,4,5], [1,2,3,5,6])
-    [(1, 1), (None, 2), (3, 3), (4, None), (5, 5), (None, 6)]
-    >>> Main().lstcomp([1], [2,3,4,5,6])
-    [(1, None), (None, 2), (None, 3), (None, 4), (None, 5), (None, 6)]
-    >>> Main().lstcomp([2,3,4,5,6], [1])
-    [(None, 1), (2, None), (3, None), (4, None), (5, None), (6, None)]
-    >>> Main().lstcomp([2,4,6], [1,3,5])
-    [(None, 1), (2, None), (None, 3), (4, None), (None, 5), (6, None)]
-    >>> Main().lstcomp([1,3,5], [2,4,6])
-    [(1, None), (None, 2), (3, None), (None, 4), (5, None), (None, 6)]
-    >>> Main().lstcomp([1,3,5], [])
-    [(1, None), (3, None), (5, None)]
-    >>> Main().lstcomp([], [1,2,3])
-    [(None, 1), (None, 2), (None, 3)]
 """
         ilst1 = iter(sorted(lst1))
         ilst2 = iter(sorted(lst2))

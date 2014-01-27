@@ -48,33 +48,33 @@ True
         self.ignore = None
         if self.options.get('ignore') is not None:
             self.ignore = re.compile(self.options['ignore'])
-        if self.options.get('splitre') is not None:
+        if self.options.get('splitre'):
             self.linesplit = re.compile(self.options['splitre'])
         self.aeps = self.options.get('aeps', 1e-8)
         self.reps = self.options.get('reps', 1e-5)
 
     def __eq__(self, other):
         if self.options.get('verbose'):
-            print("__EQ__ !%s! !%s!" % (self.value.split('\n')[0],
-                                        other.value.split('\n')[0]))
-        if self.ignore is not None and self.ignore.search(self.value) and \
-          self.ignore.search(other.value):
+            print("__EQ__ !%s! !%s!" % (self.value.strip(),
+                                        other.value.strip()))
+        if (self.ignore is not None and self.ignore.search(self.value) and
+            self.ignore.search(other.value)):
             if self.options.get('verbose'):
-                print("IGNORE !%s! !%s!" % (self.value.split('\n')[0],
-                                            other.value.split('\n')[0]))
+                print("IGNORE !%s! !%s!" % (self.value.strip(),
+                                            other.value.strip()))
             return True
-        elif self.value.split('\n')[0] == other.value.split('\n')[0]:
+        elif self.value.strip() == other.value.strip():
             if self.options.get('verbose'):
-                print("EQUAL !%s! !%s!" % (self.value.split('\n')[0],
-                                           other.value.split('\n')[0]))
+                print("EQUAL !%s! !%s!" % (self.value.strip(),
+                                           other.value.strip()))
             return True
         else:
-            sLine1 = self.splitline(self.value.split('\n')[0])
-            sLine2 = self.splitline(other.value.split('\n')[0])
+            sLine1 = self.splitline(self.value.strip())
+            sLine2 = self.splitline(other.value.strip())
             if len(sLine1) != len(sLine2):
                 if self.options.get('verbose'):
                     print("SPLITLEN !%s! !%s!" % (
-                        self.value.split('\n')[0], other.value.split('\n')[0]))
+                        self.value.strip(), other.value.strip()))
                 return False
             for token1, token2 in zip(sLine1, sLine2):
                 if self.options.get('verbose'):
@@ -86,30 +86,30 @@ True
                     continue
                 elif _FLOAT.match(token1) or _FLOAT.match(token2):
                     if self.options.get('verbose'):
-                        print("FLOAT !%s! !%s!" % (self.value.split('\n')[0],
-                                                   other.value.split('\n')[0]))
+                        print("FLOAT !%s! !%s!" % (self.value.strip(),
+                                                   other.value.strip()))
                     try:
                         if self.fequals(float(token1), float(token2)):
                             continue
                     except ValueError:
                         if self.options.get('verbose'):
                             print("ValueError !%s! !%s!" % (
-                                self.value.split('\n')[0],
-                                other.value.split('\n')[0]))
+                                self.value.strip(),
+                                other.value.strip()))
                 elif _INT.match(token1) or _INT.match(token2):
                     if self.options.get('verbose'):
-                        print("INT !%s! !%s!" % (self.value.split('\n')[0],
-                                                 other.value.split('\n')[0]))
+                        print("INT !%s! !%s!" % (self.value.strip(),
+                                                 other.value.strip()))
                     if self.fequals(int(token1), int(token2)):
                         continue
 
                 if self.options.get('verbose'):
                     print("TOKEN !%s! !%s!" % (
-                        self.value.split('\n')[0], other.value.split('\n')[0]))
+                        self.value.strip(), other.value.strip()))
                 return False
             if self.options.get('verbose'):
                 print("SAME !%s! !%s!" % (
-                    self.value.split('\n')[0], other.value.split('\n')[0]))
+                    self.value.strip(), other.value.strip()))
             return True
 
     def fequals(self, float1, float2):

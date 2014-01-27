@@ -14,6 +14,7 @@ SHELL = /bin/sh
 PY = $(shell ls ../lib/numdiff/*.py)
 
 TESTS =
+TESTS += utf-8_test
 TESTS += test_test
 TESTS += dir_test
 TESTS += stest_ctest
@@ -40,8 +41,9 @@ PYPATH = PYTHONPATH=".;../lib"
 else
 PYPATH = PYTHONPATH=.:../lib
 endif
-PYTHON = $(PYPATH) python
-NUMDIFF=PATH="../app:$(PATH)" $(PYPATH) python -c "from numdiff import main;main()"
+PY_EXE = python
+PYTHON = $(PYPATH) $(PY_EXE)
+NUMDIFF=PATH="../app:$(PATH)" $(PYPATH) $(PY_EXE) -c "from numdiff import main;main()"
 
 IGN = $(shell [ -n "$$(svn propget svn:ignore .)" ] && echo "$$(svn propget svn:ignore .)")
 
@@ -109,6 +111,11 @@ recur2_test:	$(PY) ref/d1/data.txt ref/d2/data.txt
 	-$(NUMDIFF) -r ref/1 ref/2 --exclude=.svn | tee $@.txt
 	diff -b $@.txt ref/$@.txt$(TESTCLASS)
 	touch $@
+
+utf-8_test:	$(PY) ref/utf-8.1.txt ref/utf-8.2.txt
+	$(NUMDIFF) ref/utf-8.1.txt ref/utf-8.2.txt
+	touch $@
+
 
 clean:
 	rm -f $(TESTS)
