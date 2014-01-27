@@ -14,6 +14,7 @@ SHELL = /bin/sh
 PY = $(shell ls ../lib/numdiff/*.py)
 
 TESTS =
+TESTS += esrD_test
 TESTS += utf-8_test
 TESTS += test_test
 TESTS += dir_test
@@ -59,6 +60,10 @@ install:	test
 
 mlab_test:	$(PY) ref/mlab_R2007b ref/mlab_R2012a
 	$(NUMDIFF) --matlab ref/mlab_R2007b ref/mlab_R2012a
+	touch $@
+
+esrD_test:	$(PY) ref/esrD ref/d2
+	$(NUMDIFF) -r ref/esrD ref/d2
 	touch $@
 
 %_test: %.py $(PY)

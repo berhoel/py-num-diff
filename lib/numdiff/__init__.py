@@ -215,27 +215,6 @@ tree for the base dir part `iDir`.
 >>> w.shorttree(iDir='ref/1', *('ref/1', ['1', '.svn'], ['2', '3', '4'])
 ...     ) == ['1', '.svn', '2', '3', '4']
 True
->>> ['/'.join(os.path.split(i)) for i in w.shorttree(iDir='ref/1',
-...        *('ref/1/1', ['.svn'], []))] == ['1/.svn']
-True
->>> list(['/'.join(os.path.split(i)) for i in w.shorttree(iDir='ref/1',
-...                   *('ref/1/1/.svn',
-...                     ['text-base', 'prop-base', 'props', 'tmp'],
-...                     ['entries', 'all-wcprops']))]) == [
-...     '1/.svn/text-base', '1/.svn/prop-base', '1/.svn/props', '1/.svn/tmp',
-...     '1/.svn/entries', '1/.svn/all-wcprops']
-True
->>> w.exclude = re.compile(r'\.svn').match
->>> w.shorttree(iDir='ref/1', *('ref/1', ['1', '.svn'],
-...      ['2', '3', '4'])) == ['1', '2', '3', '4']
-True
->>> w.shorttree(iDir='ref/1', *('ref/1/1', ['.svn'], [])) == []
-True
->>> w.shorttree(iDir='ref/1',
-...             *('ref/1/1/.svn',
-...               ['text-base', 'prop-base', 'props', 'tmp'],
-...               ['entries', 'all-wcprops'])) == []
-True
 """
         if self.exclude(os.path.split(base)[-1]):
             return []
@@ -318,7 +297,7 @@ by `None`.
             dirs, files = xtree2[1:]
             [dirs.remove(i) for i in dirs[::-1] if self.exclude(i)]
             [files.remove(i) for i in files[::-1] if self.exclude(i)]
-            res_tree2 += self.shorttree(xtree1[0], dirs, files, iDir=dir2)
+            res_tree2 += self.shorttree(xtree2[0], dirs, files, iDir=dir2)
         return self.lstcomp(res_tree1, res_tree2)
 
     @staticmethod
