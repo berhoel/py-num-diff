@@ -14,7 +14,6 @@ SHELL = /bin/sh
 PY = $(shell ls ../lib/numdiff/*.py)
 
 TESTS =
-TESTS += esrD_test
 TESTS += utf-8_test
 TESTS += test_test
 TESTS += dir_test
@@ -62,10 +61,6 @@ mlab_test:	$(PY) ref/mlab_R2007b ref/mlab_R2012a
 	$(NUMDIFF) --matlab ref/mlab_R2007b ref/mlab_R2012a
 	touch $@
 
-esrD_test:	$(PY) ref/esrD ref/d2
-	$(NUMDIFF) -r ref/esrD ref/d2
-	touch $@
-
 %_test: %.py $(PY)
 	$(PYTHON) $<
 	touch $@
@@ -104,15 +99,15 @@ fourth_ctest:	$(PY) ref/third1.txt ref/third2.txt
 	$(NUMDIFF) ref/third1.txt ref/third2.txt --aeps=1e-11 ; [ $$? -eq 1 ]
 	touch $@
 
-dir_test:	$(PY) ref/d1/data.txt ref/d2/data.txt
-	$(NUMDIFF) --verbose ref/d1/data.txt ref/d2
+dir_test:	$(PY) ref/d1/data.txt ref/data2/data.txt
+	$(NUMDIFF) --verbose ref/d1/data.txt ref/data2
 	touch $@
 
-recur_test:	$(PY) ref/d1/data.txt ref/d2/data.txt
-	$(NUMDIFF) -r ref/d1 ref/d2 --exclude=.svn
+recur_test:	$(PY) ref/d1/data.txt ref/data2/data.txt
+	$(NUMDIFF) -r ref/d1 ref/data2 --exclude=.svn
 	touch $@
 
-recur2_test:	$(PY) ref/d1/data.txt ref/d2/data.txt
+recur2_test:	$(PY) ref/d1/data.txt ref/data2/data.txt
 	-$(NUMDIFF) -r ref/1 ref/2 --exclude=.svn | tee $@.txt
 	diff -b $@.txt ref/$@.txt$(TESTCLASS)
 	touch $@
