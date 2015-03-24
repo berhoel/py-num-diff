@@ -1,11 +1,24 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
-numerical diff for text files
+"""Numerical diff for text files.
 """
 
-from __future__ import (print_function, division, absolute_import,
-                        unicode_literals)
+from __future__ import (
+    division, print_function, absolute_import, unicode_literals)
+
+# Standard libraries.
+import os
+import re
+import sys
+import codecs
+import difflib
+import fnmatch
+import os.path
+from argparse import ArgumentParser
+
+from .files import Directory, fileFactory, RegularFile
+from .cmpline import CmpLine
+from .difflist import DiffList
 
 # ID: $Id$"
 __date__ = "$Date$"[6:-1]
@@ -13,20 +26,9 @@ __version__ = "$Revision$"[10:-1]
 __author__ = "`Berthold Höllmann <berthold.hoellmann@GL-group.com>`__"
 __copyright__ = "Copyright © 2005 by Germanischer Lloyd SE"
 
-import codecs
-import difflib
-import fnmatch
-import os
-import os.path
-import sys
-import re
-from argparse import ArgumentParser
 if sys.version_info < (3, 1):
     from itertools import izip as zip
 
-from .files import fileFactory, RegularFile, Directory
-from .cmpline import CmpLine
-from .difflist import DiffList
 
 __all__ = ['main']
 

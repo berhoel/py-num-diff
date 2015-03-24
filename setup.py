@@ -1,28 +1,27 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
-Setup file for numdiff.
+"""Setup file for numdiff.
 """
 
-# ID: $Id$"
-__date__ = "$Date$"[6:-1]
-__version__ = "$Revision$"[10:-1]
-__author__ = "`Berthold Höllmann <berthold.hoellmann@GL-group.com>`__"
-__copyright__ = "Copyright © 2013 by Germanischer Lloyd SE"
+from __future__ import division, print_function, absolute_import
 
-import re
+# Standard libraries.
 from setuptools import setup
-from distutils.command import build_scripts
 
-build_scripts.first_line_re = re.compile(br'^###!.*python(\s+.*)?$')
+# ID: $Id$
+__date__ = "$Date$"[6:-1]
+__scm_version__ = "$Revision$"[10:-1]
+__author__ = "`Berthold Höllmann <berthold.hoellmann@dnvgl.com>`__"
+__copyright__ = "Copyright © 2013 by DNV GL SE"
+
 
 if __name__ == '__main__':
     setup(name='numdiff',
-          version='1.2',
+          version='1.3',
           description="Numerical diff, written in Python",
           keywords="diff numerical compare",
           author='Berthold Höllmann',
-          author_email="hoel@GL-Group.com",
+          author_email="",
           license='Other/Proprietary License',
           package_dir={'': 'lib'},
           packages=['numdiff'],
@@ -41,7 +40,6 @@ if __name__ == '__main__':
 
 # Local Variables:
 # mode: python
-# mode: flyspell
-# ispell-local-dictionary: "en"
+# ispell-local-dictionary: "english"
 # compile-command: "python setup.py build"
 # End:
