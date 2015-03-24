@@ -21,7 +21,7 @@ if __name__ == '__main__':
           description="Numerical diff, written in Python",
           keywords="diff numerical compare",
           author='Berthold Höllmann',
-          author_email="",
+          author_email="berthold.hoellmann@dnvgl.com",
           license='Other/Proprietary License',
           package_dir={'': 'lib'},
           packages=['numdiff'],
