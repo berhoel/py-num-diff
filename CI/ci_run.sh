@@ -39,7 +39,7 @@ pip$PYMAJOR install --index-url=$INDEX_URL --user --upgrade virtualenv
 
 VIRTDIR=$(echo "/tmp/numdiff_${TEAMCITY_PROJECT_NAME}_${TEAMCITY_BUILDCONF_NAME}" | sed "s-[ ;:]-_-g")
 
-if [ ! -e $VIRTDIR ] ; then
+if [ ! -d $VIRTDIR ] ; then
     if [ "$(uname -o)" = "Cygwin" ] ; then
         virtualenv $(cygpath --windows $VIRTDIR) --python=c:/python$PYVER/python.exe
     else
@@ -58,7 +58,9 @@ echo "##teamcity[blockClosed name='virtEnv']"
 echo "##teamcity[blockOpened name='prequisites' description='Install prequisites']"
 
 pip$PYMAJOR install --index-url=$INDEX_URL --upgrade pytest pytest-pep8 pytest-cov wheel
-pip$PYMAJOR install --index-url=$INDEX_URL --upgrade --requirement=requirements.txt
+if [ -e requirements.txt ] ; then
+    pip$PYMAJOR install --index-url=$INDEX_URL --upgrade --requirement=requirements.txt
+fi
 
 echo "##teamcity[blockClosed name='prequisites']"
 
