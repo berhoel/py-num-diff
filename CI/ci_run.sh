@@ -17,18 +17,31 @@ set -e
 
 if [ "$(uname -o)" = "Cygwin" ] ; then
     PIPCONFPATH="$(cygpath $APPDATA)/pip"
-    PIPCONFEXT=pipini
-    PIPARCH=dist_WIN_64
+    PIPCONF=pip.ini
     PYTHON=python.exe
 else
     PIPCONFPATH=$HOME/.pip
     PIPCONF=pip.conf
-    PIPARCH=dist_UBUNTU_14_04
     PYTHON=python$PYMAJOR
 fi
 
-# define functions for the different steps
+# Generate index server information
+get_index_server () {
+    UCS=$($PYTHON -c "import sys; print ('UCS4' if sys.maxunicode > 65535 else 'UCS2')")
 
+    if [ "$(uname -o)" = "Cygwin" ] ; then
+        PIPARCH=WIN_64
+    else
+        if [ "$UCS" = "UCS4" ] ; then
+            PIPARCH=UBUNTU_14_04_UCS4
+        else
+            PIPARCH=UBUNTU_14_04
+        fi
+    fi
+    echo "http://srverc.germanlloyd.org/devpi/dnvgl/dist_$PIPARCH/+simple/"
+}
+
+# ensure pip configuration file exists
 gen_pipconf () {
     if [ ! -e "$PIPCONFPATH/$PIPCONF" ] ; then
         if [ ! -d "$PIPCONFPATH" ] ; then
@@ -40,12 +53,11 @@ gen_pipconf () {
     fi
 }
 
+# set up virtual environment for tests
 virt_env () {
-    echo "##teamcity[blockOpened name='virtEnv' description='Activating virtual environment']"
-
     pip$PYMAJOR install --index-url=$INDEX_URL --user --upgrade virtualenv
 
-    VIRTDIR=$(echo "/tmp/numdiff_${TEAMCITY_PROJECT_NAME}_${TEAMCITY_BUILDCONF_NAME}" | sed "s-[ ;:]-_-g")
+    VIRTDIR=$(echo "/tmp/numdiff_${TEAMCITY_PROJECT_NAME}_${TEAMCITY_BUILDCONF_NAME}_py$PYVER" | sed "s-[ ;:]-_-g")
 
     if [ ! -d $VIRTDIR ] ; then
         if [ "$(uname -o)" = "Cygwin" ] ; then
@@ -54,96 +66,91 @@ virt_env () {
             virtualenv $VIRTDIR --python=python$PYMAJOR
         fi
     fi
-
-    echo "##teamcity[blockClosed name='virtEnv']"
 }
 
+# install required packages into virtual environment
 py_prep () {
-    echo "##teamcity[blockOpened name='prequisites' description='Install prequisites']"
-
     pip$PYMAJOR install --index-url=$INDEX_URL --upgrade pytest pytest-pep8 pytest-cov wheel
     if [ -e requirements.txt ] ; then
         pip$PYMAJOR install --index-url=$INDEX_URL --upgrade --requirement=requirements.txt
     fi
-
-    echo "##teamcity[blockClosed name='prequisites']"
 }
 
+# compile source code
 py_build () {
-    echo "##teamcity[blockOpened name='building' description='Building']"
-
-    if [ "$(uname -o)" = "Cygwin" ] ; then
-        python setup.py build
-    else
-        $PYTHON setup.py build
-    fi
-
-    echo "##teamcity[blockClosed name='building']"
+    $PYTHON setup.py build
 }
 
+# execute tests
 py_test () {
-    echo "##teamcity[blockOpened name='testing' description='Testing']"
-
-    tox -e py$PYVER
-
-    echo "##teamcity[blockClosed name='testing']"
+    tox -e py$PYVER -i $INDEX_URL
 }
 
+# generate basic distribution files
 py_dist_bdist () {
-    echo "##teamcity[blockOpened name='simple' description='Generating simple installer']"
-
-    $PYTHON setup.py bdist
-
-    echo "##teamcity[blockClosed name='simple']"
+    $PYTHON setup.py bdist bdist
 }
 
+# generate binary egg files
 py_dist_egg () {
-    echo "##teamcity[blockOpened name='egg' description='Generating egg installer']"
-
     $PYTHON setup.py bdist_egg
-
-    echo "##teamcity[blockClosed name='egg']"
 }
 
+# generate binary wheel files
 py_dist_wheel () {
-    echo "##teamcity[blockOpened name='wheel' description='Generating wheel installer']"
-
     pip$PYMAJOR wheel .
-
-    echo "##teamcity[blockClosed name='wheel']"
 }
 
+# generate different distribution files
 py_dist () {
-    echo "##teamcity[blockOpened name='bdist' description='Generating binary installer']"
-
+    echo "##teamcity[blockOpened name='py_dist_bdist' description='Generating simple installer']"
     py_dist_bdist
+    echo "##teamcity[blockClosed name='py_dist_bdist']"
 
+    echo "##teamcity[blockOpened name='py_dist_egg' description='Generating egg installer']"
     py_dist_egg
+    echo "##teamcity[blockClosed name='py_dist_egg']"
 
+    echo "##teamcity[blockOpened name='py_dist_wheel' description='Generating wheel installer']"
     py_dist_wheel
-
-    echo "##teamcity[blockClosed name='bdist']"
+    echo "##teamcity[blockClosed name='py_dist_wheel']"
 }
 
 # calling the defined functions
 
+echo "##teamcity[blockOpened name='get_index_server' description='calculate pip index server path']"
+INDEX_URL=$(get_index_server)
+echo "##teamcity[progressMessage 'INDEX_URL: $INDEX_URL']"
+echo "##teamcity[blockClosed name='get_index_server']"
+
+echo "##teamcity[blockOpened name='gen_pipconf' description='generate pip configuration']"
 gen_pipconf
+echo "##teamcity[blockClosed name='gen_pipconf']"
 
+echo "##teamcity[blockOpened name='virt_env' description='Activating virtual environment']"
 virt_env
-
 if [ "$(uname -o)" = "Cygwin" ] ; then
     . $VIRTDIR/Scripts/activate
 else
     . $VIRTDIR/bin/activate
 fi
+echo "##teamcity[blockClosed name='virt_env']"
 
+echo "##teamcity[blockOpened name='py_prep' description='Install prequisites']"
 py_prep
+echo "##teamcity[blockClosed name='py_prep']"
 
+echo "##teamcity[blockOpened name='py_build' description='Building']"
 py_build
+echo "##teamcity[blockClosed name='py_build']"
 
+echo "##teamcity[blockOpened name='py_test' description='Testing']"
 py_test
+echo "##teamcity[blockClosed name='py_test']"
 
+echo "##teamcity[blockOpened name='py_dist' description='Generating binary installer']"
 py_dist
+echo "##teamcity[blockClosed name='py_dist']"
 
 # Local Variables:
 # mode: shell-script
