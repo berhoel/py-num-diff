@@ -16,10 +16,12 @@ set -e
 # general definitions
 
 if [ "$(uname -o)" = "Cygwin" ] ; then
+    cd $(cygpath "$CHECKOUT_DIR")
     PIPCONFPATH="$(cygpath $APPDATA)/pip"
     PIPCONF=pip.ini
     PYTHON=python.exe
 else
+    cd "$CHECKOUT_DIR"
     PIPCONFPATH=$HOME/.pip
     PIPCONF=pip.conf
     PYTHON=python$PYMAJOR
@@ -49,7 +51,6 @@ gen_pipconf () {
         fi
         echo "[global]" > "$PIPCONFPATH/$PIPCONF"
         echo "trusted_host = srverc.germanlloyd.org" >> "$PIPCONFPATH/$PIPCONF"
-        echo "index_url = http://srverc.germanlloyd.org/devpi/dnvgl/$PIPARCH/+simple/" >> "$PIPCONFPATH/$PIPCONF"
     fi
 }
 
@@ -98,7 +99,7 @@ py_dist_egg () {
 
 # generate binary wheel files
 py_dist_wheel () {
-    pip$PYMAJOR wheel .
+    pip$PYMAJOR wheel --wheel-dir=dist .
 }
 
 # generate different distribution files
