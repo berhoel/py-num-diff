@@ -107,7 +107,11 @@ recur_test:	$(PY) ref/d1/data.txt ref/data2/data.txt
 	$(NUMDIFF) -r ref/d1 ref/data2 --exclude=.svn
 	touch $@
 
-recur2_test:	$(PY) ref/d1/data.txt ref/data2/data.txt
+ref/1/3:
+	(set -e ; cd ref/1 ; ln -s 2 3)
+
+recur2_test:	$(PY) ref/d1/data.txt ref/data2/data.txt	\
+	ref/1/3
 	-$(NUMDIFF) -r ref/1 ref/2 --exclude=.svn | tee $@.txt
 	diff -b $@.txt ref/$@.txt$(TESTCLASS)
 	touch $@
