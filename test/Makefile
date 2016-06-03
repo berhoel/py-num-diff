@@ -113,7 +113,7 @@ ref/1/3:
 recur2_test:	$(PY) ref/d1/data.txt ref/data2/data.txt	\
 	ref/1/3
 	-$(NUMDIFF) -r ref/1 ref/2 --exclude=.svn | tee $@.txt
-	diff -b $@.txt ref/$@.txt$(TESTCLASS)
+	diff -b $@.txt ref/$@.txt
 	touch $@
 
 utf-8_test:	$(PY) ref/utf-8.1.txt ref/utf-8.2.txt
