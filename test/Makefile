@@ -31,12 +31,14 @@ TESTS += third_ctest
 TESTS += fourth_ctest
 TESTS += comma_ctest
 TESTS += recur_test
+ifneq ("$(shell uname | cut --characters 1-6)","CYGWIN")
+# Test uses symlinks, fails with Windows Python
 TESTS += recur2_test
+endif
 TESTS += mlab_test
 TESTS += reps_ctest
 
 ifeq ("$(shell uname | cut --characters 1-6)","CYGWIN")
-TESTCLASS=WIN
 PYPATH = PYTHONPATH=".;../lib"
 else
 PYPATH = PYTHONPATH=.:../lib
