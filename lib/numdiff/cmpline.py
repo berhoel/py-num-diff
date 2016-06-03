@@ -4,8 +4,11 @@
 Class for alowing numerical diffing of text lines.
 """
 
-from __future__ import (print_function, division, absolute_import,
-                        unicode_literals)
+from __future__ import (
+    division, print_function, absolute_import, unicode_literals)
+
+# Standard libraries.
+import re
 
 # ID: $Id$"
 __date__ = "$Date$"[6:-1]
@@ -13,7 +16,6 @@ __version__ = "$Revision$"[10:-1]
 __author__ = "`Berthold Höllmann <berthold.hoellmann@GL-group.com>`__"
 __copyright__ = "Copyright © 2010 by Germanischer Lloyd SE"
 
-import re
 
 __all__ = ['CmpLine']
 
@@ -148,7 +150,5 @@ True
 
 # Local Variables:
 # mode: python
-# mode: flyspell
-# ispell-local-dictionary: "en"
 # compile-command: "make -C ../../test test"
 # End:
