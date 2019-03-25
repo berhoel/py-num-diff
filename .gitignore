@@ -1,0 +1,13 @@
+/**/*.py,cover
+/**/*.pyc
+/*.virtenv
+/.cache
+/.coverage
+/.tox
+/build
+/coverage.xml
+/dist
+/htmlcov
+/lib/numdiff.egg-info
+/pytest_main.xml
+/wheelhouse
