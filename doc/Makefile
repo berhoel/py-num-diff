@@ -1,4 +1,4 @@
-# Copyright (C) 2012 by Germanischer Lloyd SE
+# Copyright (C) 2012 by Germanischer Lloyd SE, 2018 DNV GL SE
 
 # ======================================================================
 # Task      Generate documentation for numdiff
@@ -31,8 +31,6 @@ install: doc
 
 # Local Variables:
 # mode:makefile
-# mode:flyspell
-# ispell-local-dictionary:"en"
 # compile-command:"make"
 # coding:utf-8
 # End:

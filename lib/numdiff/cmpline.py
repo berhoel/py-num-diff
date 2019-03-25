@@ -1,20 +1,20 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Class for alowing numerical diffing of text lines.
+Class for allowing numerical diffing of text lines.
 """
-
 from __future__ import (
     division, print_function, absolute_import, unicode_literals)
 
 # Standard libraries.
 import re
 
-# ID: $Id$"
-__date__ = "$Date$"[6:-1]
-__version__ = "$Revision$"[10:-1]
-__author__ = "`Berthold Höllmann <berthold.hoellmann@GL-group.com>`__"
-__copyright__ = "Copyright © 2010 by Germanischer Lloyd SE"
+__date__ = "2019/03/25 14:10:01 berhol"
+__author__ = "Berthold Höllmann"
+__copyright__ = "Copyright © 2010 by Germanischer Lloyd SE, 2019 by DNV GL SE"
+__credits__ = ["Berthold Höllmann"]
+__maintainer__ = "Berthold Höllmann"
+__email__ = "berthold.hoellmann@dnvgl.com"
 
 
 __all__ = ['CmpLine']
@@ -60,7 +60,7 @@ True
             print("__EQ__ !%s! !%s!" % (self.value.strip(),
                                         other.value.strip()))
         if (self.ignore is not None and self.ignore.search(self.value) and
-            self.ignore.search(other.value)):
+                self.ignore.search(other.value)):
             if self.options.get('verbose'):
                 print("IGNORE !%s! !%s!" % (self.value.strip(),
                                             other.value.strip()))
@@ -128,8 +128,8 @@ True
 """
         if self.options['fixcols']:
             return [line[i:j] for i, j in zip([0] +
-                    self.options['fixcols'][:-1],
-                    self.options['fixcols'])]
+                                              self.options['fixcols'][:-1],
+                                              self.options['fixcols'])]
         else:
             return self.linesplit.split(line)
 
@@ -150,5 +150,6 @@ True
 
 # Local Variables:
 # mode: python
-# compile-command: "make -C ../../test test"
+# compile-command: "python ../../setup.py test"
+# time-stamp-pattern: "30/__date__ = \"%:y/%02m/%02d %02H:%02M:%02S %u\""
 # End:

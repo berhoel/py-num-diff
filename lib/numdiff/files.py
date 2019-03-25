@@ -4,16 +4,19 @@
 File identifier for numdiff.
 """
 
-from __future__ import (print_function, division, absolute_import,
-                        unicode_literals)
+from __future__ import (
+    division, print_function, absolute_import, unicode_literals)
 
-# ID: $Id$"
-__date__ = "$Date$"[6:-1]
-__version__ = "$Revision$"[10:-1]
-__author__ = "`Berthold Höllmann <berthold.hoellmann@GL-group.com>`__"
-__copyright__ = "Copyright © 2010 by Germanischer Lloyd SE"
-
+# Standard libraries.
 import os.path
+
+__date__ = "2019/03/25 14:06:05 berhol"
+__author__ = "Berthold Höllmann"
+__copyright__ = "Copyright © 2010 by Germanischer Lloyd SE, 2019 by DNV GL SE"
+__credits__ = ["Berthold Höllmann"]
+__maintainer__ = "Berthold Höllmann"
+__email__ = "berthold.hoellmann@dnvgl.com"
+
 
 __all__ = ['fileFactory', 'RegularFile', 'Directory']
 
@@ -21,6 +24,7 @@ __all__ = ['fileFactory', 'RegularFile', 'Directory']
 class NumDiffFileObject(object):
     """Base class for representing different file kinds.
 """
+
     def __init__(self, path, base):
         self.path = path
         self.base = base
@@ -38,6 +42,7 @@ class RegularFile(NumDiffFileObject):
 >>> ('%s' % a) == ('%s is a regular file' % os.path.join('1', '2'))
 True
 """
+
     def __str__(self):
         return "%s is a regular file" % os.path.join(self.base, self.path)
 
@@ -48,6 +53,7 @@ class EmptyFile(RegularFile):
 >>> ('%s' % a) == ('%s is a regular empty file' % os.path.join('1', '2'))
 True
 """
+
     def __str__(self):
         return "%s is a regular empty file" % os.path.join(
             self.base, self.path)
@@ -59,6 +65,7 @@ class Directory(NumDiffFileObject):
 >>> ('%s' % a) == ('%s is a directory' % os.path.join('1', '2'))
 True
 """
+
     def __str__(self):
         return "%s is a directory" % os.path.join(self.base, self.path)
 
@@ -82,7 +89,6 @@ Makefile is a regular file
 
 # Local Variables:
 # mode: python
-# mode: flyspell
-# ispell-local-dictionary: "en"
-# compile-command: "make -C ../../test test"
+# compile-command: "python ../../setup.py test"
+# time-stamp-pattern: "30/__date__ = \"%:y/%02m/%02d %02H:%02M:%02S %u\""
 # End:

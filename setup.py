@@ -8,16 +8,17 @@ from __future__ import division, print_function, absolute_import
 # Standard libraries.
 from setuptools import setup
 
-# ID: $Id$
-__date__ = "$Date$"[6:-1]
-__scm_version__ = "$Revision$"[10:-1]
-__author__ = "`Berthold Höllmann <berthold.hoellmann@dnvgl.com>`__"
-__copyright__ = "Copyright © 2013 by DNV GL SE"
+__date__ = "2019/03/25 14:10:25 berhol"
+__author__ = "Berthold Höllmann"
+__copyright__ = "Copyright © 2013 by DNV GL SE, 2019 by DNV GL SE"
+__credits__ = ["Berthold Höllmann"]
+__maintainer__ = "Berthold Höllmann"
+__email__ = "berthold.hoellmann@dnvgl.com"
 
 
 if __name__ == '__main__':
     setup(name='numdiff',
-          version='1.3',
+          version='1.3.1',
           description="Numerical diff, written in Python",
           keywords="diff numerical compare",
           author='Berthold Höllmann',
@@ -40,6 +41,6 @@ if __name__ == '__main__':
 
 # Local Variables:
 # mode: python
-# ispell-local-dictionary: "english"
-# compile-command: "python setup.py build"
+# compile-command: "python ./setup.py test"
+# time-stamp-pattern: "30/__date__ = \"%:y/%02m/%02d %02H:%02M:%02S %u\""
 # End:

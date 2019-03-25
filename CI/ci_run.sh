@@ -6,11 +6,6 @@
 
 # Author: Berthold Höllmann <berthold.hoellmann@dnvgl.com>
 
-# ID: $Id$
-author="$Author$"
-date="$Date$"
-version="$Revision$"
-
 set -e
 
 # general definitions
@@ -154,9 +149,6 @@ py_dist
 echo "##teamcity[blockClosed name='py_dist']"
 
 # Local Variables:
-# mode: shell-script
-# mode: flyspell
-# ispell-local-dictionary: "english"
 # coding: utf-8
 # compile-command: "sh install_prerequisite.sh"
 # End:

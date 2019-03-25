@@ -3,21 +3,22 @@
 """
 Class for handling combining difflib.SequenceMatcher result merging.
 """
+from __future__ import (
+    division, print_function, absolute_import, unicode_literals)
 
-from __future__ import (print_function, division, absolute_import,
-                        unicode_literals)
-
-# ID: $Id$"
-__date__ = "$Date$"[6:-1]
-__version__ = "$Revision$"[10:-1]
-__author__ = "`Berthold Höllmann <berthold.hoellmann@GL-group.com>`__"
-__copyright__ = "Copyright © 2012 by Germanischer Lloyd SE"
+__date__ = "2019/03/25 14:01:03 berhol"
+__author__ = "Berthold Höllmann"
+__copyright__ = "Copyright © 2012 by Germanischer Lloyd SE, 2019 by DNV GL SE"
+__credits__ = ["Berthold Höllmann"]
+__maintainer__ = "Berthold Höllmann"
+__email__ = "berthold.hoellmann@dnvgl.com"
 
 
 class DiffList(object):
     """
 >>> b = DiffList(maxchunk=2)
 """
+
     def __init__(self, maxchunk=20):
         self.vals = []
         self.maxchunk = maxchunk
@@ -129,7 +130,6 @@ True
 
 # Local Variables:
 # mode: python
-# mode: flyspell
-# ispell-local-dictionary: "en"
-# compile-command: "make -C ../../test test"
+# compile-command: "python ../../setup.py test"
+# time-stamp-pattern: "30/__date__ = \"%:y/%02m/%02d %02H:%02M:%02S %u\""
 # End:

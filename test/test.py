@@ -4,25 +4,29 @@
 Test functionality for numdiff.
 """
 
-from __future__ import (print_function, division, absolute_import,
-                        unicode_literals)
+from __future__ import (
+    division, print_function, absolute_import, unicode_literals)
 
-# ID: $Id$"
-__date__ = "$Date$"[6:-1]
-__version__ = "$Revision$"[10:-1]
-__author__ = "`Berthold Höllmann <berthold.hoellmann@GL-group.com>`__"
-__copyright__ = "Copyright © 2005 by Germanischer Lloyd SE"
-
+# Standard libraries.
+import sys
 import doctest
 import unittest
-import sys
+
+# DNV GL libraries.
+import numdiff
+from numdiff import files, cmpline, difflist
+
+__date__ = "2019/03/25 14:15:41 berhol"
+__author__ = "Berthold Höllmann"
+__copyright__ = "Copyright © 2005 by Germanischer Lloyd SE, 2019 DNV GL SE"
+__credits__ = ["Berthold Höllmann"]
+__maintainer__ = "Berthold Höllmann"
+__email__ = "berthold.hoellmann@dnvgl.com"
+
 if sys.version_info < (3, 1):
     from cStringIO import StringIO
 else:
     from io import StringIO
-
-import numdiff
-from numdiff import cmpline, difflist, files
 
 
 class testCfile(unittest.TestCase):
@@ -61,7 +65,6 @@ if __name__ == '__main__':
 
 # Local Variables:
 # mode: python
-# mode: flyspell
-# ispell-local-dictionary: "en"
-# compile-command: "python test.py"
+# compile-command: "python ../setup.py test"
+# time-stamp-pattern: "30/__date__ = \"%:y/%02m/%02d %02H:%02M:%02S %u\""
 # End:

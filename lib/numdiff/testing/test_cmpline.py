@@ -3,17 +3,18 @@
 """
 Testing the numdiff.cmpline module.
 """
+from __future__ import (
+    division, print_function, absolute_import, unicode_literals)
 
-from __future__ import (print_function, division, absolute_import,
-                        unicode_literals)
+# DNV GL libraries.
+from numdiff.cmpline import CmpLine
 
-# ID: $Id$"
-__date__ = "$Date$"[6:-1]
-__version__ = "$Revision$"[10:-1]
-__author__ = "`Berthold Höllmann <berthold.hoellmann@GL-group.com>`__"
-__copyright__ = "Copyright © 2014 by Germanischer Lloyd SE"
-
-from ..cmpline import CmpLine
+__date__ = "2019/03/25 14:14:02 berhol"
+__author__ = "Berthold Höllmann"
+__copyright__ = "Copyright © 2014 by Germanischer Lloyd SE, 2019 by DNV GL SE"
+__credits__ = ["Berthold Höllmann"]
+__maintainer__ = "Berthold Höllmann"
+__email__ = "berthold.hoellmann@dnvgl.com"
 
 
 class TestCmpLine(object):
@@ -27,6 +28,6 @@ class TestCmpLine(object):
 
 # Local Variables:
 # mode: python
-# ispell-local-dictionary: "english"
-# compile-command: "python setup.py build"
+# compile-command: "python ../../../setup.py test"
+# time-stamp-pattern: "30/__date__ = \"%:y/%02m/%02d %02H:%02M:%02S %u\""
 # End:

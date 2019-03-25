@@ -1,4 +1,4 @@
-# Copyright (C) 2006 by Germanischer Lloyd AG
+# Copyright (C) 2006 by Germanischer Lloyd AG, 2019 DNV GL SE
 
 # ======================================================================
 # Task      testing tasks for numdiff
@@ -6,8 +6,6 @@
 # Author    Berthold Hoellmann <hoel@GL-group.com>
 # Project   numdiff
 # ======================================================================
-
-# ID: $Id$
 
 SHELL = /bin/sh
 
