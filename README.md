@@ -1,5 +1,5 @@
-pyNumDiff
-=========
+pyNumDiff [![logo](numdiff_avatar.png "Logo Title Text")]
+=========================================================
 
 Python based tool to compare putatively simiilar text file. Numerical
 values in pairing lines are considered equal if their values return true format
