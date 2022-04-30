@@ -4,13 +4,10 @@
 File identifier for numdiff.
 """
 
-from __future__ import (
-    division, print_function, absolute_import, unicode_literals)
-
 # Standard libraries.
 import os.path
 
-__date__ = "2019/03/25 14:06:05 berhol"
+__date__ = "2022/04/30 19:09:08 hoel"
 __author__ = "Berthold Höllmann"
 __copyright__ = "Copyright © 2010 by Germanischer Lloyd SE, 2019 by DNV GL SE"
 __credits__ = ["Berthold Höllmann"]
@@ -18,12 +15,11 @@ __maintainer__ = "Berthold Höllmann"
 __email__ = "berthold.hoellmann@dnvgl.com"
 
 
-__all__ = ['fileFactory', 'RegularFile', 'Directory']
+__all__ = ["fileFactory", "RegularFile", "Directory"]
 
 
 class NumDiffFileObject(object):
-    """Base class for representing different file kinds.
-"""
+    """Base class for representing different file kinds."""
 
     def __init__(self, path, base):
         self.path = path
@@ -31,17 +27,15 @@ class NumDiffFileObject(object):
 
     @property
     def name(self):
-        """Returns filename (property)
-"""
+        """Returns filename (property)"""
         return os.path.join(self.base, self.path)
 
 
 class RegularFile(NumDiffFileObject):
     """
->>> a = RegularFile('2', '1')
->>> ('%s' % a) == ('%s is a regular file' % os.path.join('1', '2'))
-True
-"""
+    >>> a = RegularFile('2', '1')
+    >>> ('%s' % a) == ('%s is a regular file' % os.path.join('1', '2'))
+    True"""
 
     def __str__(self):
         return "%s is a regular file" % os.path.join(self.base, self.path)
@@ -49,22 +43,19 @@ True
 
 class EmptyFile(RegularFile):
     """
->>> a = EmptyFile('2', '1')
->>> ('%s' % a) == ('%s is a regular empty file' % os.path.join('1', '2'))
-True
-"""
+    >>> a = EmptyFile('2', '1')
+    >>> ('%s' % a) == ('%s is a regular empty file' % os.path.join('1', '2'))
+    True"""
 
     def __str__(self):
-        return "%s is a regular empty file" % os.path.join(
-            self.base, self.path)
+        return "%s is a regular empty file" % os.path.join(self.base, self.path)
 
 
 class Directory(NumDiffFileObject):
     """
->>> a = Directory('2', '1')
->>> ('%s' % a) == ('%s is a directory' % os.path.join('1', '2'))
-True
-"""
+    >>> a = Directory('2', '1')
+    >>> ('%s' % a) == ('%s is a directory' % os.path.join('1', '2'))
+    True"""
 
     def __str__(self):
         return "%s is a directory" % os.path.join(self.base, self.path)
@@ -72,13 +63,12 @@ True
 
 def fileFactory(path, base):
     """Factory method for generating apropriate instances of the
-different subclasses of `NumDiffFileObject`.
+    different subclasses of `NumDiffFileObject`.
 
->>> print('%s' % fileFactory('Makefile', ''))
-Makefile is a regular file
->>> print('%s' % fileFactory('.', ''))
-. is a directory
-"""
+    >>> print('%s' % fileFactory('Makefile', ''))
+    Makefile is a regular file
+    >>> print('%s' % fileFactory('.', ''))
+    . is a directory"""
     fname = os.path.join(base, path)
     statinfo = os.stat(fname)
     if os.path.isdir(fname):
@@ -86,6 +76,7 @@ Makefile is a regular file
     elif statinfo.st_size == 0:
         return EmptyFile(path, base)
     return RegularFile(path, base)
+
 
 # Local Variables:
 # mode: python

@@ -3,12 +3,12 @@
 """Setup file for numdiff.
 """
 
-from __future__ import division, print_function, absolute_import
+from __future__ import absolute_import, division, print_function
 
 # Standard libraries.
 from setuptools import setup
 
-__date__ = "2019/03/25 14:10:25 berhol"
+__date__ = "2022/04/30 19:22:16 hoel"
 __author__ = "Berthold Höllmann"
 __copyright__ = "Copyright © 2013 by DNV GL SE, 2019 by DNV GL SE"
 __credits__ = ["Berthold Höllmann"]
@@ -18,7 +18,7 @@ __email__ = "berthold.hoellmann@dnvgl.com"
 
 if __name__ == '__main__':
     setup(name='numdiff',
-          version='1.3.1',
+          version='1.4.0',
           description="Numerical diff, written in Python",
           keywords="diff numerical compare",
           author='Berthold Höllmann',

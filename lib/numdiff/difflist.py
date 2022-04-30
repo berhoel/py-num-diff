@@ -3,10 +3,8 @@
 """
 Class for handling combining difflib.SequenceMatcher result merging.
 """
-from __future__ import (
-    division, print_function, absolute_import, unicode_literals)
 
-__date__ = "2019/03/25 14:01:03 berhol"
+__date__ = "2022/04/30 19:08:39 hoel"
 __author__ = "Berthold Höllmann"
 __copyright__ = "Copyright © 2012 by Germanischer Lloyd SE, 2019 by DNV GL SE"
 __credits__ = ["Berthold Höllmann"]
